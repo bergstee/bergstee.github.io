@@ -92,42 +92,29 @@
         </div>
     </main>
 
-    <script src="js/product-data.js"></script>
+    <script src="js/products.js"></script>
     <script>
         // Get product ID from URL
         const urlParams = new URLSearchParams(window.location.search);
         const productId = parseInt(urlParams.get('id'));
 
-        // Load products data
-        fetch('js/products.js')
-            .then(response => response.text())
-            .then(text => {
-                // Extract products array by evaluating the JS
-                const productsScript = document.createElement('script');
-                productsScript.textContent = text;
-                document.body.appendChild(productsScript);
-
-                // Now we have access to the products array
-                const product = window.products[productId];
-                if (product) {
-                    document.title = `${product.title} | SideQuest Co Shop`;
-                    document.getElementById('productTitle').textContent = product.title;
-                    document.getElementById('productPrice').textContent = `${product.currency} ${product.price.toFixed(2)}`;
-                    document.getElementById('productImage').src = product.imageUrl;
-                    document.getElementById('productImage').alt = product.title;
-                    document.getElementById('buyButton').href = product.etsyUrl;
-                    
-                    // Find matching product data
-                    const productData = productsData.find(p => p.listing_id === product.etsyUrl.split('/').pop());
-                    if (productData) {
-                        document.getElementById('productDescription').textContent = productData.description;
-                        document.getElementById('productViews').querySelector('span').textContent = productData.views + ' views';
-                        document.getElementById('productFavorites').querySelector('span').textContent = productData.num_favorers + ' favorites';
-                    }
-                } else {
-                    window.location.href = '/';
-                }
-            });
+        // Get product data
+        const product = products[productId];
+        if (product) {
+            document.title = `${product.title} | SideQuest Co Shop`;
+            document.getElementById('productTitle').textContent = product.title;
+            document.getElementById('productPrice').textContent = `${product.currency} ${product.price.toFixed(2)}`;
+            document.getElementById('productImage').src = product.imageUrl;
+            document.getElementById('productImage').alt = product.title;
+            document.getElementById('buyButton').href = product.etsyUrl;
+            
+            // Set description and stats
+            document.getElementById('productDescription').textContent = product.description;
+            document.getElementById('productViews').querySelector('span').textContent = product.views + ' views';
+            document.getElementById('productFavorites').querySelector('span').textContent = product.favorites + ' favorites';
+        } else {
+            window.location.href = '/';
+        }
     </script>
 </body>
 </html>

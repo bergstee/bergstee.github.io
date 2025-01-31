@@ -1,197 +1,68 @@
 const products = [
-    // 3048 sales
+    // Most viewed - 224,302 views
     {
         title: "3D Printed Bookshelf Suriel / Ghost / Grim Reaper Figurine",
         price: 13.50,
         currency: "CAD",
         imageUrl: "https://i.etsystatic.com/53821259/r/il/4fc942/6603775734/il_570xN.6603775734_oqxp.jpg",
-        etsyUrl: "http://www.sidequestcoshop.etsy.com/listing/1769501037"
+        imageUrlFull: "https://i.etsystatic.com/53821259/r/il/4fc942/6603775734/il_fullxfull.6603775734_oqxp.jpg",
+        additionalImages: [
+            {
+                small: "https://i.etsystatic.com/53821259/r/il/90c517/6651875439/il_570xN.6651875439_fzyp.jpg",
+                full: "https://i.etsystatic.com/53821259/r/il/90c517/6651875439/il_fullxfull.6651875439_fzyp.jpg"
+            },
+            {
+                small: "https://i.etsystatic.com/53821259/r/il/568091/6596765396/il_570xN.6596765396_kjjo.jpg",
+                full: "https://i.etsystatic.com/53821259/r/il/568091/6596765396/il_fullxfull.6596765396_kjjo.jpg"
+            },
+            {
+                small: "https://i.etsystatic.com/53821259/r/il/ac4554/6603774210/il_570xN.6603774210_qqdt.jpg",
+                full: "https://i.etsystatic.com/53821259/r/il/ac4554/6603774210/il_fullxfull.6603774210_qqdt.jpg"
+            },
+            {
+                small: "https://i.etsystatic.com/53821259/r/il/b05fb1/6290507777/il_570xN.6290507777_5hlx.jpg",
+                full: "https://i.etsystatic.com/53821259/r/il/b05fb1/6290507777/il_fullxfull.6290507777_5hlx.jpg"
+            }
+        ],
+        etsyUrl: "http://www.sidequestcoshop.etsy.com/listing/1769501037",
+        description: "🌟 Bring the mystical world of ACOTAR to life with this stunning 3D printed Suriel figurine! 🌟\n\nThis meticulously crafted Suriel figure is inspired by Sarah J. Maas's bestselling A Court of Thorns and Roses series. Perfect for fans and collectors alike, this unique piece captures the eerie beauty and ancient wisdom of the enigmatic Suriel.\n\nProduct Details:\n• Material: High-quality PLA plastic\n• Height: 2.6\" (7.6 cm)\n• Width: 2\" (5.0 cm)\n• Depth: 1.5\"(4 cm)\n• Color: figurine is black, tea cup is pink\n\nFeatures:\n✨ Intricate detailing showcasing the Suriel's cloak\n✨ Sturdy base for easy display\n✨ Includes miniature cup with a little heart inside of it that comes attached to figurine 🤎\n\nThis 3D printed Suriel makes an excellent:\n• Bookshelf or desk decoration\n• Gift for ACOTAR fans\n• Addition to your ACOTAR collection\n• Conversation starter for fellow fantasy enthusiasts\n\n🌙 Embrace the magic of Prythian and order your Suriel figurine today! 🌙\n\nNote: This is a fan-made item and is not officially licensed merchandise.",
+        views: 224302,
+        favorites: 19743
     },
-    // 168 sales
     {
         title: "Bluey Inspired Gnomes",
         price: 10.50,
         currency: "CAD",
         imageUrl: "https://i.etsystatic.com/53821259/r/il/244bc9/6356481810/il_570xN.6356481810_cauv.jpg",
-        etsyUrl: "http://www.sidequestcoshop.etsy.com/listing/1754000188"
-    },
-    // 143 sales
-    {
-        title: "Rhysand / High Lord of the Night Court",
-        price: 17.00,
-        currency: "CAD",
-        imageUrl: "https://i.etsystatic.com/53821259/r/il/3c4b11/6356682605/il_570xN.6356682605_avam.jpg",
-        etsyUrl: "http://www.sidequestcoshop.etsy.com/listing/1787614902"
-    },
-    // 141 sales
-    {
-        title: "ACOTAR Dresser | Archeron Sisters Mini Dresser",
-        price: 28.00,
-        currency: "CAD",
-        imageUrl: "https://i.etsystatic.com/53821259/r/il/c678ea/6271444608/il_570xN.6271444608_pja1.jpg",
-        etsyUrl: "http://www.sidequestcoshop.etsy.com/listing/1765716672"
-    },
-    // 55 sales
-    {
-        title: "TBR Mini Bookshelf with Suriel",
-        price: 39.99,
-        currency: "CAD",
-        imageUrl: "https://i.etsystatic.com/53821259/r/il/029ac3/6603790000/il_570xN.6603790000_kogr.jpg",
-        etsyUrl: "http://www.sidequestcoshop.etsy.com/listing/1777366994"
-    },
-    // 34 sales
-    {
-        title: "Bookshelf Dragon / Wyvern / Abraxos",
-        price: 19.99,
-        currency: "CAD",
-        imageUrl: "https://i.etsystatic.com/53821259/r/il/c07a27/6435966748/il_570xN.6435966748_kbcc.jpg",
-        etsyUrl: "http://www.sidequestcoshop.etsy.com/listing/1827247265"
-    },
-    // 27 sales
-    {
-        title: "Jelly Jubilee Figurine / Starlight Fancy",
-        price: 16.00,
-        currency: "CAD",
-        imageUrl: "https://i.etsystatic.com/53821259/r/il/64f44c/6375537225/il_570xN.6375537225_ozff.jpg",
-        etsyUrl: "http://www.sidequestcoshop.etsy.com/listing/1791383902"
-    },
-    // 26 sales
-    {
-        title: "Mail Otter with Letter / Crescent City Otter",
-        price: 14.00,
-        currency: "CAD",
-        imageUrl: "https://i.etsystatic.com/53821259/r/il/5ac5c9/6632542575/il_570xN.6632542575_gwhn.jpg",
-        etsyUrl: "http://www.sidequestcoshop.etsy.com/listing/1777372492"
-    },
-    // 23 sales
-    {
-        title: "Andarna / Fourth Wing Articulated Dragon Figurine",
-        price: 19.99,
-        currency: "CAD",
-        imageUrl: "https://i.etsystatic.com/53821259/r/il/8e5d6b/6522961677/il_570xN.6522961677_sed4.jpg",
-        etsyUrl: "http://www.sidequestcoshop.etsy.com/listing/1821004084"
-    },
-    // 16 sales
-    {
-        title: "Book Straightener Sign | Fourth Wing Shelf Sign",
-        price: 17.50,
-        currency: "CAD",
-        imageUrl: "https://i.etsystatic.com/53821259/r/il/6966d5/6601833369/il_570xN.6601833369_n4nn.jpg",
-        etsyUrl: "http://www.sidequestcoshop.etsy.com/listing/1841546048"
-    },
-    // 16 sales
-    {
-        title: "Suriel / Ghost / Grim Reaper Figurine",
-        price: 14.50,
-        currency: "CAD",
-        imageUrl: "https://i.etsystatic.com/53821259/r/il/ba4dac/6651885839/il_570xN.6651885839_30ok.jpg",
-        etsyUrl: "http://www.sidequestcoshop.etsy.com/listing/1847220462"
-    },
-    // 14 sales
-    {
-        title: "Tamlin's Tears To Go Cup / Keychain",
-        price: 11.99,
-        currency: "CAD",
-        imageUrl: "https://i.etsystatic.com/53821259/r/il/474eed/6465276812/il_570xN.6465276812_gtr2.jpg",
-        etsyUrl: "http://www.sidequestcoshop.etsy.com/listing/1832403145"
-    },
-    // 5 sales
-    {
-        title: "Book Straightener Sign | Throne of Glass",
-        price: 17.50,
-        currency: "CAD",
-        imageUrl: "https://i.etsystatic.com/53821259/r/il/6054bb/6601969347/il_570xN.6601969347_qy1g.jpg",
-        etsyUrl: "http://www.sidequestcoshop.etsy.com/listing/1841569890"
-    },
-    // 5 sales
-    {
-        title: "Dragon Flexi Toy | Articulated 3D Print",
-        price: 9.99,
-        currency: "CAD",
-        imageUrl: "https://i.etsystatic.com/53821259/r/il/6b994a/6631164911/il_570xN.6631164911_cktm.jpg",
-        etsyUrl: "http://www.sidequestcoshop.etsy.com/listing/1847269646"
-    },
-    // 2 sales
-    {
-        title: "Dragon Wings Reading Ring",
-        price: 12.00,
-        currency: "CAD",
-        imageUrl: "https://i.etsystatic.com/53821259/r/il/40a75d/6631064127/il_570xN.6631064127_amtu.jpg",
-        etsyUrl: "http://www.sidequestcoshop.etsy.com/listing/1861610053"
-    },
-    // 1 sale
-    {
-        title: "Snake Flexi Toy | Lunar New Year Snake",
-        price: 19.99,
-        currency: "CAD",
-        imageUrl: "https://i.etsystatic.com/53821259/r/il/9b651b/6619525335/il_570xN.6619525335_sf2q.jpg",
-        etsyUrl: "http://www.sidequestcoshop.etsy.com/listing/1859417541"
-    },
-    // 1 sale
-    {
-        title: "Book Blanks for TBR Mini Bookshelf",
-        price: 13.00,
-        currency: "CAD",
-        imageUrl: "https://i.etsystatic.com/53821259/r/il/b88f8a/6637627913/il_570xN.6637627913_idkv.jpg",
-        etsyUrl: "http://www.sidequestcoshop.etsy.com/listing/1863114133"
-    },
-    // 1 sale
-    {
-        title: "Fourth Wing Bundle | Dragon & Reading Ring",
-        price: 49.99,
-        currency: "CAD",
-        imageUrl: "https://i.etsystatic.com/53821259/r/il/c0b672/6594953325/il_570xN.6594953325_kd11.jpg",
-        etsyUrl: "http://www.sidequestcoshop.etsy.com/listing/1852267941"
-    },
-    // 0 sales
-    {
-        title: "Mountain Range Reading Ring | Velaris",
-        price: 12.00,
-        currency: "CAD",
-        imageUrl: "https://i.etsystatic.com/53821259/r/il/b0dd83/6590098436/il_570xN.6590098436_bot8.jpg",
-        etsyUrl: "http://www.sidequestcoshop.etsy.com/listing/1863235779"
-    },
-    // 0 sales
-    {
-        title: "Bluey Inspired Gnome Keychain",
-        price: 15.00,
-        currency: "CAD",
-        imageUrl: "https://i.etsystatic.com/53821259/r/il/b4fabf/6592475662/il_570xN.6592475662_nqwr.jpg",
-        etsyUrl: "http://www.sidequestcoshop.etsy.com/listing/1849381980"
-    },
-    // 0 sales
-    {
-        title: "Just One More Chapter Reading Ring",
-        price: 14.99,
-        currency: "CAD",
-        imageUrl: "https://i.etsystatic.com/53821259/r/il/663d7c/6532227840/il_570xN.6532227840_hssz.jpg",
-        etsyUrl: "http://www.sidequestcoshop.etsy.com/listing/1836729930"
-    },
-    // 0 sales
-    {
-        title: "Magical Train Reading Ring | Reading is Magic",
-        price: 9.99,
-        currency: "CAD",
-        imageUrl: "https://i.etsystatic.com/53821259/r/il/e12174/6583039852/il_570xN.6583039852_6j46.jpg",
-        etsyUrl: "http://www.sidequestcoshop.etsy.com/listing/1847407058"
-    },
-    // 0 sales
-    {
-        title: "Wingleader To Go Cup / Keychain",
-        price: 11.99,
-        currency: "CAD",
-        imageUrl: "https://i.etsystatic.com/53821259/r/il/6f7d54/6602008291/il_570xN.6602008291_t71v.jpg",
-        etsyUrl: "http://www.sidequestcoshop.etsy.com/listing/1855783227"
-    },
-    // 0 sales
-    {
-        title: "Library Sign | Personalized Library Street Sign",
-        price: 13.00,
-        currency: "CAD",
-        imageUrl: "https://i.etsystatic.com/53821259/r/il/a48cb4/6597325874/il_570xN.6597325874_sdbd.jpg",
-        etsyUrl: "http://www.sidequestcoshop.etsy.com/listing/1850504444"
+        imageUrlFull: "https://i.etsystatic.com/53821259/r/il/244bc9/6356481810/il_fullxfull.6356481810_cauv.jpg",
+        additionalImages: [
+            {
+                small: "https://i.etsystatic.com/53821259/r/il/658ec3/6253632753/il_570xN.6253632753_g6ek.jpg",
+                full: "https://i.etsystatic.com/53821259/r/il/658ec3/6253632753/il_fullxfull.6253632753_g6ek.jpg"
+            },
+            {
+                small: "https://i.etsystatic.com/53821259/r/il/4bbcef/6353763672/il_570xN.6353763672_2vjr.jpg",
+                full: "https://i.etsystatic.com/53821259/r/il/4bbcef/6353763672/il_fullxfull.6353763672_2vjr.jpg"
+            },
+            {
+                small: "https://i.etsystatic.com/53821259/r/il/213fb3/6353764120/il_570xN.6353764120_tn5d.jpg",
+                full: "https://i.etsystatic.com/53821259/r/il/213fb3/6353764120/il_fullxfull.6353764120_tn5d.jpg"
+            }
+        ],
+        etsyUrl: "http://www.sidequestcoshop.etsy.com/listing/1754000188",
+        description: "Bring a piece of Bluey's world to your garden or home with these sweet mini 3D printed version of Bluey's garden gnomes! \n\nProduct Details:\n\nMaterial: High-quality PLA plastic\nHeight: 3.5 inches (8.9 cm)\nWidth: 1.4 inches (3.6 cm)\nWeight: Approximately 1 oz (30 g)\nColours are part of the 3D printing process\n\nFeatures:\n\nEntirely 3D printed (including colours)\nDurable and long-lasting\nPerfect for Bluey fans of all ages\nGreat for flower pots, plant pots, or indoor display\n\nThe colours are integrated into the 3D printing process, ensuring a consistent and durable finish without the need for painting.\n\nNote: This is a fan-made product and is not officially licensed merchandise.",
+        views: 8865,
+        favorites: 596
     }
 ];
+
+// Initialize product grid when the page loads (only on index page)
+window.addEventListener('DOMContentLoaded', () => {
+    const productsGrid = document.querySelector('.product-grid');
+    if (productsGrid) {
+        createProductCards();
+    }
+});
 
 function createProductCards() {
     const productsGrid = document.querySelector('.product-grid');
@@ -243,6 +114,3 @@ function createProductCards() {
         productsGrid.appendChild(card);
     });
 }
-
-// Initialize when the page loads
-window.addEventListener('DOMContentLoaded', createProductCards);
