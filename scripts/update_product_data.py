@@ -1,6 +1,7 @@
 import psycopg2
 import json
 from datetime import datetime
+import html
 
 # Database connection parameters
 DB_PARAMS = {
@@ -30,23 +31,26 @@ def get_product_data():
     )
     SELECT 
         l.listing_id,
-        l.title,
+        COALESCE(l.wholesale_item_title, l.title) as final_title,
         l.price_amount,
         l.price_currency_code,
-        l.description,
+        COALESCE(l.wholesale_item_description, l.description) as final_description,
         l.views,
         l.num_favorers,
         l.url,
+        l.available_for_wholesale,
+        l.wholesale_discout_perc,
         COALESCE(
             json_agg(ri.image_data ORDER BY ri.rank),
             '[]'::json
         ) as images
     FROM listings l
     LEFT JOIN RankedImages ri ON l.listing_id = ri.listing_id
-    WHERE l.state = 'active'
+    WHERE (l.state = 'active' OR l.state IS NULL)
     GROUP BY 
-        l.listing_id, l.title, l.price_amount, l.price_currency_code,
-        l.description, l.views, l.num_favorers, l.url
+        l.listing_id, final_title, l.price_amount, l.price_currency_code,
+        final_description, l.views, l.num_favorers, l.url, l.available_for_wholesale,
+        l.wholesale_discout_perc
     ORDER BY l.views DESC;
     """
     
@@ -58,27 +62,34 @@ def get_product_data():
     product_data_simple = []
     
     for row in rows:
-        listing_id, title, price, currency, desc, views, favorites, url, images = row
+        listing_id, title, price, currency, desc, views, favorites, url, available_for_wholesale, wholesale_discout_perc, images = row
         
+        # Decode HTML entities
+        title = html.unescape(title) if title else ""
+        desc = html.unescape(desc) if desc else ""
+
         # Format for products.js
         product = {
+            "listing_id": str(listing_id),
             "title": title,
             "price": float(price) if price is not None else 0.0,
             "currency": currency or "CAD",
-            "imageUrl": images[0]['small'] if images and len(images) > 0 else "",
-            "imageUrlFull": images[0]['full'] if images and len(images) > 0 else "",
+            "imageUrl": images[0]['small'] if images and len(images) > 0 and images[0] is not None and 'small' in images[0] else "https://via.placeholder.com/570x570?text=Image+Not+Found",
+            "imageUrlFull": images[0]['full'] if images and len(images) > 0 and images[0] is not None and 'full' in images[0] else "https://via.placeholder.com/570x570?text=Image+Not+Found",
             "additionalImages": images[1:] if images and len(images) > 1 else [],
             "etsyUrl": url or "",
-            "description": desc or "",
+            "description": desc,
             "views": views or 0,
-            "favorites": favorites or 0
+            "favorites": favorites or 0,
+            "available_for_wholesale": available_for_wholesale,
+            "wholesale_price": float(price) * float(wholesale_discout_perc) if price is not None and wholesale_discout_perc is not None else None
         }
         products_data.append(product)
         
         # Format for product-data.js
         simple_product = {
             "listing_id": str(listing_id),
-            "description": desc or "",
+            "description": desc,
             "views": views or 0,
             "num_favorers": favorites or 0
         }
@@ -107,51 +118,30 @@ function createProductCards() {
     const productsGrid = document.querySelector('.product-grid');
     productsGrid.innerHTML = ''; // Clear any existing content
 
-    products.forEach((product, index) => {
-        const card = document.createElement('div');
-        card.className = 'product-card group p-4';
-        card.innerHTML = `
-            <div class="relative overflow-hidden mb-4">
-                <div class="relative pb-[125%] bg-gray-50 loading-pattern">
-                    <div class="absolute inset-0 flex items-center justify-center animate-pulse-subtle">
-                        <svg class="w-8 h-8 text-gray-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                    </div>
-                    <img 
-                        src="${product.imageUrl}" 
-                        alt="${product.title}" 
-                        class="absolute inset-0 w-full h-full object-cover transition-all duration-700 opacity-0 group-hover:scale-105"
-                        onload="this.classList.remove('opacity-0')"
-                        onerror="this.src='https://via.placeholder.com/570x570?text=Image+Not+Found';this.classList.remove('opacity-0')"
-                    >
-                </div>
-                <div class="absolute inset-x-0 bottom-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-t from-black/50 to-transparent">
-                    <div class="flex gap-2">
-                        <a 
-                            href="${product.etsyUrl}" 
-                            target="_blank" 
-                            class="flex-1 bg-white text-primary text-center py-2 text-sm font-medium hover-button"
+    products
+        .filter(product => product.available_for_wholesale)
+        .forEach((product, index) => {
+            const card = document.createElement('a');
+            card.href = `product.html?id=${product.listing_id}`;
+            card.className = 'product-card group block bg-custom-pink';
+            card.innerHTML = `
+                <div class="relative overflow-hidden mb-2">
+                    <div class="relative pb-[125%] bg-gray-100">
+                        <img
+                            src="${product.imageUrl}"
+                            alt="${product.title}"
+                            class="absolute inset-0 w-full h-full object-cover"
                         >
-                            Buy
-                        </a>
-                        <a 
-                            href="product.html?id=${index}" 
-                            class="flex-1 bg-white text-primary text-center py-2 text-sm font-medium hover-button"
-                        >
-                            View
-                        </a>
                     </div>
                 </div>
-            </div>
-            <div class="product-info space-y-1">
-                <h2 class="text-sm text-primary line-clamp-2 font-light">${product.title}</h2>
-                <p class="text-sm font-normal text-primary">${product.currency} ${product.price.toFixed(2)}</p>
-            </div>
-        `;
-        productsGrid.appendChild(card);
-    });
+                <div class="product-info text-center space-y-1">
+                    <h2 class="text-base text-primary font-light">${product.title}</h2>
+                    <p class="text-xs text-gray-700">Wholesale: ${product.currency} ${product.wholesale_price.toFixed(2)}</p>
+                    <p class="text-xs text-gray-700">MSRP: ${product.currency} ${product.price.toFixed(2)}</p>
+                </div>
+            `;
+            productsGrid.appendChild(card);
+        });
 }
 """
     
@@ -163,10 +153,10 @@ def main():
         products_data, product_data_simple = get_product_data()
         
         # Write to products.js
-        write_js_file(products_data, '../js/products.js', 'products')
+        write_js_file(products_data, 'js/products.js', 'products')
         
         # Write to product-data.js
-        write_js_file(product_data_simple, '../js/product-data.js', 'productsData')
+        write_js_file(product_data_simple, 'js/product-data.js', 'productsData')
         
         print(f"Successfully updated product data at {datetime.now()}")
         print(f"Wrote {len(products_data)} products to files")

@@ -4,39 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Details | SideQuest Co Shop</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#222222',
-                        secondary: '#626262'
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="dist/styles.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
+    <link href="https://fonts.googleapis.com/css2?family=Marcellus&display=swap" rel="stylesheet">
+        <style>
+            body {
+                font-family: 'Marcellus', sans-serif;
+            }
         .description {
             white-space: pre-wrap;
         }
     </style>
 </head>
 <body class="bg-white min-h-screen">
+<script>
+        if (sessionStorage.getItem('authenticated') !== 'true') {
+            window.location.href = 'login.html';
+        }
+    </script>
     <header class="py-6 mb-8 border-b border-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center">
-                <a href="/" class="text-2xl font-normal text-primary tracking-wide uppercase">SideQuest Co Shop</a>
+            <div class="flex justify-between items-center">
+                <a href="/"><img src="images/invert1.png" alt="Shop Logo" class="h-20 mx-auto"></a>
+                <a href="interest-list.html" class="text-sm font-medium text-primary hover:text-opacity-80">Interest List <span id="interest-count"></span></a>
             </div>
         </div>
     </header>
@@ -61,59 +52,79 @@
                 <div>
                     <h1 id="productTitle" class="text-3xl font-light text-primary mb-4"></h1>
                     <p id="productPrice" class="text-2xl font-normal text-primary"></p>
+<p id="wholesalePrice" class="text-xl font-normal text-gray-600"></p>
+                    <p id="msrp" class="text-xl font-normal text-gray-600"></p>
                 </div>
 
-                <div class="flex items-center space-x-6 text-sm text-secondary">
-                    <div id="productViews" class="flex items-center">
-                        <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                        </svg>
-                        <span></span>
-                    </div>
-                    <div id="productFavorites" class="flex items-center">
-                        <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                        </svg>
-                        <span></span>
-                    </div>
-                </div>
 
                 <div class="prose max-w-none">
                     <div id="productDescription" class="description text-secondary"></div>
                 </div>
 
                 <div class="flex gap-4">
-                    <a id="buyButton" target="_blank" class="flex-1 bg-primary text-white text-center py-3 text-sm font-medium hover:bg-opacity-90 transition-colors duration-300">
-                        Buy on Etsy
-                    </a>
+                    <button id="interestButton" class="flex-1 bg-primary text-white text-center py-3 text-sm font-medium hover:bg-opacity-90 transition-colors duration-300">
+                        Add to Interest List
+                    </button>
                 </div>
             </div>
         </div>
     </main>
 
-    <script src="js/products.js"></script>
+    <script src="js/products.js?v=1.1"></script>
+    <script src="js/interest-list.js"></script>
     <script>
         // Get product ID from URL
         const urlParams = new URLSearchParams(window.location.search);
-        const productId = parseInt(urlParams.get('id'));
+        const productId = urlParams.get('id');
 
         // Get product data
-        const product = products[productId];
-        if (product) {
+        const product = products.find(p => p.listing_id === productId);
+        if (product && product.available_for_wholesale) {
             document.title = `${product.title} | SideQuest Co Shop`;
             document.getElementById('productTitle').textContent = product.title;
-            document.getElementById('productPrice').textContent = `${product.currency} ${product.price.toFixed(2)}`;
+            if (product.price && typeof product.price === 'number') {
+                document.getElementById('productPrice').textContent = `Price: ${product.currency} ${product.price.toFixed(2)}`;
+            } else {
+                document.getElementById('productPrice').style.display = 'none';
+            }
+
+            if (product.wholesale_price && typeof product.wholesale_price === 'number') {
+                document.getElementById('wholesalePrice').textContent = `Wholesale: ${product.currency} ${product.wholesale_price.toFixed(2)}`;
+            } else {
+                document.getElementById('wholesalePrice').style.display = 'none';
+            }
+
+            if (product.msrp && typeof product.msrp === 'number') {
+                document.getElementById('msrp').textContent = `MSRP: ${product.currency} ${product.msrp.toFixed(2)}`;
+            } else {
+                document.getElementById('msrp').style.display = 'none';
+            }
             document.getElementById('productImage').src = product.imageUrl;
             document.getElementById('productImage').alt = product.title;
-            document.getElementById('buyButton').href = product.etsyUrl;
             
             // Set description and stats
             document.getElementById('productDescription').textContent = product.description;
-            document.getElementById('productViews').querySelector('span').textContent = product.views + ' views';
-            document.getElementById('productFavorites').querySelector('span').textContent = product.favorites + ' favorites';
         } else {
             window.location.href = '/';
+        }
+
+        const interestButton = document.getElementById('interestButton');
+        interestButton.addEventListener('click', () => {
+            let interestList = JSON.parse(sessionStorage.getItem('interestList')) || [];
+            if (!interestList.includes(productId)) {
+                interestList.push(productId);
+                sessionStorage.setItem('interestList', JSON.stringify(interestList));
+                interestButton.textContent = 'Added to Interest List';
+                interestButton.disabled = true;
+                updateInterestCount();
+            }
+        });
+
+        // Check if the product is already in the interest list on page load
+        let initialInterestList = JSON.parse(sessionStorage.getItem('interestList')) || [];
+        if (initialInterestList.includes(productId)) {
+            interestButton.textContent = 'Added to Interest List';
+            interestButton.disabled = true;
         }
     </script>
 </body>
