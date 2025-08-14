@@ -183,7 +183,7 @@ const submitOrderButton = document.getElementById('submitOrder');
             const quantityInputs = document.querySelectorAll('.quantity-input');
             quantityInputs.forEach(input => {
                 const productId = input.dataset.productId;
-                const product = products.find(p => p.listing_id === productId);
+                const product = products.find(p => p.listing_id === productId);r
                 if (product) {
                     const quantity = parseInt(input.value) || 0;
                     if (quantity > 0) {
