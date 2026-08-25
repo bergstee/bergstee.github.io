@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shop | SideQuest Co</title>
-    <link href="dist/styles.css?v=202608251045" rel="stylesheet">
+    <link href="dist/styles.css?v=202608251059" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Marcellus&display=swap" rel="stylesheet">
@@ -40,7 +40,7 @@
         </div>
     </main>
 
-    <script src="js/store.js?v=202608251045"></script>
+    <script src="js/store.js?v=202608251059"></script>
     <script>
         function esc(s) {
             const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML;
@@ -54,8 +54,8 @@
                 b.classList.toggle('active', b.dataset.country === COUNTRY);
             });
             document.getElementById('ship-note').textContent = COUNTRY === 'US'
-                ? 'Shipping to the US: $16 USD first item, $2.50 each additional. Duties are prepaid — nothing owed on delivery.'
-                : 'Shipping across Canada: $14 CAD first item, $2.50 each additional. Taxes calculated at checkout.';
+                ? 'Flat-rate shipping calculated at checkout. Duties are prepaid — nothing owed on delivery.'
+                : 'Flat-rate shipping and taxes calculated at checkout.';
         }
 
         function selectionFor(card) {
