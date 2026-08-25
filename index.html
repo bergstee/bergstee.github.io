@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SideQuest Co — Decor for the well-read shelf</title>
-<meta name="description" content="Figurines, page holders and small delights from your favourite stories — 3D printed and hand-finished in Canada.">
+<title>SideQuest Co · Decor for the well-read shelf</title>
+<meta name="description" content="Figurines, page holders and small delights from your favourite stories, 3D printed and hand-finished in Canada.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-<link href="css/storefront.css?v=202608251217" rel="stylesheet">
+<link href="css/storefront.css?v=202608251230" rel="stylesheet">
 </head>
 <body>
 
-<div class="announce">Every piece printed &amp; hand-finished in our Canadian studio · flat-rate shipping at checkout</div>
+<div class="announce">Every piece printed &amp; hand-finished in our Canadian studio · shipping calculated at checkout</div>
 
 <header class="site-header">
   <div class="wrap header-inner">
@@ -20,13 +20,13 @@
     <nav class="site-nav" data-nav></nav>
     <div class="spacer"></div>
     <input class="search" data-search placeholder="Search the shelves…" aria-label="Search products">
-    <div class="ccy" title="US prices include prepaid duty — nothing extra to pay on delivery">
+    <div class="ccy" title="US prices include prepaid duty, so there is nothing extra to pay on delivery">
       <button data-ccy="CA">CAD</button>
       <button data-ccy="US">USD</button>
     </div>
     <a href="cart.html">Cart<span class="muted" data-cart-count></span></a>
   </div>
-  <div class="duty-note" data-duty-note hidden>US prices include prepaid duty — there is nothing to pay on delivery.</div>
+  <div class="duty-note" data-duty-note hidden>US prices include prepaid duty, so there is nothing to pay on delivery.</div>
 </header>
 
 <main>
@@ -35,7 +35,7 @@
       <div class="hero-copy">
         <p class="eyebrow">SideQuest Co · Est. in a home print studio</p>
         <h1>Decor for the well-read shelf.</h1>
-        <p class="hero-lede">Figurines, page holders and small delights from your favourite stories — 3D printed and hand-finished in Canada, one layer at a time.</p>
+        <p class="hero-lede">Figurines, page holders and small delights from your favourite stories, 3D printed and hand-finished in Canada, one layer at a time.</p>
         <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
           <a class="btn" href="shop.html">Shop the collection</a>
           <a class="link-underline" href="shop.html?c=ACOTAR">Browse ACOTAR →</a>
@@ -54,7 +54,7 @@
   <section class="manifesto">
     <div class="manifesto-inner">
       <p class="eyebrow">Our process</p>
-      <p class="body">Most of what we make starts as our own sketch, inspired by a story we love; a few pieces are made under licence from independent designers whose work we admire. Either way it's printed one layer at a time on our own machines, then trimmed, assembled and checked by hand before it ships. Small batches, no warehouse — just a print studio and a very full bookshelf.</p>
+      <p class="body">Most of what we make starts as our own sketch, inspired by a story we love; a few pieces are made under licence from independent designers whose work we admire. Either way it's printed one layer at a time on our own machines, then trimmed, assembled and checked by hand before it ships. Small batches, no warehouse. Just a print studio and a very full bookshelf.</p>
     </div>
   </section>
 
@@ -81,7 +81,7 @@
   </div>
 </footer>
 
-<script src="js/storefront.js?v=202608251227"></script>
+<script src="js/storefront.js?v=202608251230"></script>
 <script>
 (async () => {
     const country = getCountry();
@@ -144,7 +144,7 @@
     } catch (err) {
         console.error(err);
         document.querySelector('[data-featured]').innerHTML =
-            '<p class="muted">The shop is temporarily unavailable — please try again shortly.</p>';
+            '<p class="muted">The shop is temporarily unavailable. Please try again shortly.</p>';
     }
 })();
 </script>

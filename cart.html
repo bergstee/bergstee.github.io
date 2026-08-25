@@ -7,24 +7,24 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-<link href="css/storefront.css?v=202608251217" rel="stylesheet">
+<link href="css/storefront.css?v=202608251230" rel="stylesheet">
 </head>
 <body>
 
-<div class="announce">Every piece printed &amp; hand-finished in our Canadian studio · flat-rate shipping at checkout</div>
+<div class="announce">Every piece printed &amp; hand-finished in our Canadian studio · shipping calculated at checkout</div>
 
 <header class="site-header">
   <div class="wrap header-inner">
     <a href="/"><img class="header-logo" src="images/invert1.png" alt="SideQuest Co"></a>
     <nav class="site-nav"><a href="shop.html">Shop</a></nav>
     <div class="spacer"></div>
-    <div class="ccy" title="US prices include prepaid duty — nothing extra to pay on delivery">
+    <div class="ccy" title="US prices include prepaid duty, so there is nothing extra to pay on delivery">
       <button data-ccy="CA">CAD</button>
       <button data-ccy="US">USD</button>
     </div>
     <a href="cart.html">Cart<span class="muted" data-cart-count></span></a>
   </div>
-  <div class="duty-note" data-duty-note hidden>US prices include prepaid duty — there is nothing to pay on delivery.</div>
+  <div class="duty-note" data-duty-note hidden>US prices include prepaid duty, so there is nothing to pay on delivery.</div>
 </header>
 
 <main class="wrap" style="max-width:960px;padding-top:52px;padding-bottom:88px">
@@ -46,7 +46,7 @@
   </div>
 </footer>
 
-<script src="js/storefront.js?v=202608251227"></script>
+<script src="js/storefront.js?v=202608251230"></script>
 <script>
 (() => {
     const country = getCountry();
@@ -58,7 +58,7 @@
             host.innerHTML = `
               <div class="empty">
                 <p style="margin:0 0 8px;font-size:20px">Your shelf is waiting.</p>
-                <p class="prose muted" style="margin:0 0 26px;font-size:17px">Nothing here yet — go find your next small delight.</p>
+                <p class="prose muted" style="margin:0 0 26px;font-size:17px">Nothing here yet. Go find your next small delight.</p>
                 <a class="btn" href="shop.html">Browse the shop</a>
               </div>`;
             return;
@@ -89,8 +89,8 @@
             <div class="cart-summary-inner">
               <div class="cart-total"><span>Subtotal</span><span>${money(subtotal, country)}</span></div>
               <p class="muted" style="margin:0;font-size:12.5px;line-height:1.55">
-                Flat-rate shipping and taxes calculated at checkout. Checkout is securely handled by Stripe.
-                ${country === 'US' ? 'Duty on US orders is prepaid — nothing to pay on delivery.' : ''}
+                Shipping and taxes are calculated at checkout. Checkout is securely handled by Stripe.
+                ${country === 'US' ? 'Duty on US orders is prepaid, so there is nothing to pay on delivery.' : ''}
               </p>
               <button class="btn" data-checkout>Continue to checkout</button>
               <a href="shop.html" class="muted" style="font-size:13px;text-align:center">← Keep browsing</a>

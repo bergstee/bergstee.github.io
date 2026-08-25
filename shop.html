@@ -4,15 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Shop | SideQuest Co</title>
-<meta name="description" content="3D printed bookish decor — designed and printed in Canada. Ships to Canada and the US.">
+<meta name="description" content="3D printed bookish decor, designed and printed in Canada. Ships to Canada and the US.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-<link href="css/storefront.css?v=202608251217" rel="stylesheet">
+<link href="css/storefront.css?v=202608251230" rel="stylesheet">
 </head>
 <body>
 
-<div class="announce">Every piece printed &amp; hand-finished in our Canadian studio · flat-rate shipping at checkout</div>
+<div class="announce">Every piece printed &amp; hand-finished in our Canadian studio · shipping calculated at checkout</div>
 
 <header class="site-header">
   <div class="wrap header-inner">
@@ -20,18 +20,18 @@
     <nav class="site-nav" data-nav></nav>
     <div class="spacer"></div>
     <input class="search" data-search placeholder="Search the shelves…" aria-label="Search products">
-    <div class="ccy" title="US prices include prepaid duty — nothing extra to pay on delivery">
+    <div class="ccy" title="US prices include prepaid duty, so there is nothing extra to pay on delivery">
       <button data-ccy="CA">CAD</button>
       <button data-ccy="US">USD</button>
     </div>
     <a href="cart.html">Cart<span class="muted" data-cart-count></span></a>
   </div>
-  <div class="duty-note" data-duty-note hidden>US prices include prepaid duty — there is nothing to pay on delivery.</div>
+  <div class="duty-note" data-duty-note hidden>US prices include prepaid duty, so there is nothing to pay on delivery.</div>
 </header>
 
 <main class="wrap" style="padding-top:52px;padding-bottom:88px">
   <h1 class="page-title" style="margin:0 0 6px;font-size:34px;font-weight:400">The Shop</h1>
-  <p class="prose muted" style="margin:0 0 30px;font-size:17px">3D printed bookish decor — designed and printed in Canada. Flat-rate shipping and taxes calculated at checkout.</p>
+  <p class="prose muted" style="margin:0 0 30px;font-size:17px">3D printed bookish decor, designed and printed in Canada. Shipping and taxes are calculated at checkout.</p>
 
   <div class="chips" data-chips></div>
 
@@ -64,7 +64,7 @@
   </div>
 </footer>
 
-<script src="js/storefront.js?v=202608251227"></script>
+<script src="js/storefront.js?v=202608251230"></script>
 <script>
 (async () => {
     const country = getCountry();
@@ -81,7 +81,7 @@
         catalog = await getCatalog(country);
     } catch (err) {
         document.querySelector('[data-grid]').innerHTML =
-            '<p class="muted">The shop is temporarily unavailable — please try again shortly.</p>';
+            '<p class="muted">The shop is temporarily unavailable. Please try again shortly.</p>';
         return;
     }
     const products = catalog.products;
@@ -111,7 +111,7 @@
         const list = visible();
         document.querySelector('[data-grid]').innerHTML = list.length
             ? list.map(p => productCard(p, country)).join('')
-            : '<p class="muted">Nothing matches that yet — try another story or search.</p>';
+            : '<p class="muted">Nothing matches that yet. Try another story or a different search.</p>';
         const bits = [`${list.length} ${list.length === 1 ? 'piece' : 'pieces'}`];
         if (filter !== 'All') bits.push('in ' + filter);
         if (query.trim()) bits.push(`matching “${query.trim()}”`);

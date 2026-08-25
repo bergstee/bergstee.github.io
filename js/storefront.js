@@ -33,7 +33,7 @@ function track(eventType, detail) {
         session_id: sessionId(),
         event_type: eventType,
         path: location.pathname,
-        // Host only — a full referring URL can carry the visitor's search terms.
+        // Host only, since a full referring URL can carry the visitor's search terms.
         referrer: document.referrer ? new URL(document.referrer).host : '',
         currency: getCountry() === 'US' ? 'USD' : 'CAD',
     }, detail || {});
@@ -64,7 +64,7 @@ function initGA() {
     window.dataLayer = window.dataLayer || [];
     window.gtag = function () { window.dataLayer.push(arguments); };
     window.gtag('js', new Date());
-    // Ad personalisation and cross-device signals off — analytics only.
+    // Ad personalisation and cross-device signals off. Analytics only.
     window.gtag('config', GA_MEASUREMENT_ID, {
         anonymize_ip: true,
         allow_google_signals: false,
@@ -306,7 +306,7 @@ async function startCheckout(btn) {
    const NAV_CATEGORIES = ['ACOTAR', 'Fourth Wing', 'Bluey']; */
 const NAV_CATEGORIES = [];
 const NAV_MAX = 3;
-// Generic buckets make poor nav items — they say nothing about what's inside.
+// Generic buckets make poor nav items: they say nothing about what's inside.
 const NAV_EXCLUDE = ['Home & Gifts', 'Bookish'];
 
 /** Renders the "Shop + collections" nav into any [data-nav] element. */

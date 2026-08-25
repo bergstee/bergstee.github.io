@@ -7,11 +7,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-<link href="css/storefront.css?v=202608251217" rel="stylesheet">
+<link href="css/storefront.css?v=202608251230" rel="stylesheet">
 </head>
 <body>
 
-<div class="announce">Every piece printed &amp; hand-finished in our Canadian studio · flat-rate shipping at checkout</div>
+<div class="announce">Every piece printed &amp; hand-finished in our Canadian studio · shipping calculated at checkout</div>
 
 <header class="site-header">
   <div class="wrap header-inner">
@@ -19,13 +19,13 @@
     <nav class="site-nav" data-nav></nav>
     <div class="spacer"></div>
     <input class="search" data-search placeholder="Search the shelves…" aria-label="Search products">
-    <div class="ccy" title="US prices include prepaid duty — nothing extra to pay on delivery">
+    <div class="ccy" title="US prices include prepaid duty, so there is nothing extra to pay on delivery">
       <button data-ccy="CA">CAD</button>
       <button data-ccy="US">USD</button>
     </div>
     <a href="cart.html">Cart<span class="muted" data-cart-count></span></a>
   </div>
-  <div class="duty-note" data-duty-note hidden>US prices include prepaid duty — there is nothing to pay on delivery.</div>
+  <div class="duty-note" data-duty-note hidden>US prices include prepaid duty, so there is nothing to pay on delivery.</div>
 </header>
 
 <main class="wrap" style="padding-top:44px;padding-bottom:88px" data-main>
@@ -46,7 +46,7 @@
   </div>
 </footer>
 
-<script src="js/storefront.js?v=202608251227"></script>
+<script src="js/storefront.js?v=202608251230"></script>
 <script>
 (async () => {
     const country = getCountry();
@@ -55,7 +55,7 @@
 
     let catalog;
     try { catalog = await getCatalog(country); }
-    catch (e) { main.innerHTML = '<p class="muted">The shop is temporarily unavailable — please try again shortly.</p>'; return; }
+    catch (e) { main.innerHTML = '<p class="muted">The shop is temporarily unavailable. Please try again shortly.</p>'; return; }
 
     const products = catalog.products;
     const product = products.find(p => String(p.listing_id) === String(id));
@@ -108,8 +108,8 @@
             <div class="spec" style="margin-top:34px">
               <div class="spec-row"><span class="muted">Material</span><span>PLA plastic, printed and hand-finished in our studio</span></div>
               <div class="spec-row"><span class="muted">Made in</span><span>Canada</span></div>
-              <div class="spec-row"><span class="muted">Shipping</span><span>Flat-rate, calculated at checkout</span></div>
-              <div class="spec-row"><span class="muted">US orders</span><span>Duty prepaid — nothing to pay on delivery</span></div>
+              <div class="spec-row"><span class="muted">Shipping</span><span>Fixed rate per item, shown at checkout</span></div>
+              <div class="spec-row"><span class="muted">US orders</span><span>Duty prepaid, nothing to pay on delivery</span></div>
             </div>
           </div>
         </div>
