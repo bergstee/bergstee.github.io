@@ -1,31 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thank You | SideQuest Co</title>
-    <link href="dist/styles.css?v=202608251059" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Marcellus&display=swap" rel="stylesheet">
-    <style> body { font-family: 'Marcellus', sans-serif; } </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thank you | SideQuest Co</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link href="css/storefront.css?v=1" rel="stylesheet">
 </head>
-<body class="bg-white min-h-screen">
-    <header class="py-6 mb-8 border-b border-gray-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <a href="/"><img src="images/invert1.png" alt="SideQuest Co" class="h-20 mx-auto"></a>
-        </div>
-    </header>
-    <main class="max-w-xl mx-auto px-4 text-center pb-16">
-        <h1 class="text-3xl font-light text-primary mb-4">Thank you for your order! 🎉</h1>
-        <p class="text-secondary mb-2">Your payment was received. A receipt has been emailed to you by Stripe.</p>
-        <p class="text-secondary mb-8">We print and pack every order ourselves in Canada — you'll get a shipping confirmation with tracking within a few business days.</p>
-        <a href="shop.html" class="inline-block bg-primary text-white px-8 py-3 text-sm font-medium hover:bg-opacity-90 transition-colors duration-300">Back to the shop</a>
-    </main>
-    <script src="js/store.js?v=202608251059"></script>
-    <script>
-        // Payment completed — clear the cart.
-        try { localStorage.removeItem('sqc_cart_v1'); } catch (e) {}
-    </script>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a href="home.html"><img class="header-logo" src="images/invert1.png" alt="SideQuest Co"></a>
+    <div class="spacer"></div>
+    <a href="shop.html">Shop</a>
+  </div>
+</header>
+
+<main class="wrap" style="max-width:680px;padding-top:72px;padding-bottom:96px;text-align:center">
+  <p class="eyebrow" data-order-line>Order confirmed</p>
+  <h1 class="page-title" style="margin:0 0 16px;font-size:38px;font-weight:400">Thank you, fellow reader.</h1>
+  <p class="prose muted" style="margin:0 auto 40px;font-size:18px;line-height:1.6;max-width:42ch">
+    Your order is confirmed and a receipt is on its way to your inbox. The printers are warming up — we'll email you tracking as soon as your pieces ship.
+  </p>
+
+  <div style="border:1px solid var(--line);text-align:left" data-summary hidden></div>
+
+  <a class="btn" href="shop.html" style="display:inline-block;margin-top:40px;padding:13px 32px;font-size:14px">Back to the shop</a>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <img src="images/invert1.png" alt="SideQuest Co" style="height:38px;width:fit-content">
+      <p class="prose muted" style="margin:0;font-size:15px">Designed &amp; 3D printed in Canada, one layer at a time.</p>
+    </div>
+    <div class="footer-links">
+      <a href="home.html">Home</a>
+      <a href="shop.html">Shop</a>
+      <span class="muted">sidequestco.ca</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/storefront.js?v=1"></script>
+<script>
+(() => {
+    // Show what was ordered from the cart we still hold locally, then clear it.
+    // (Stripe has the authoritative order; this is just a friendly recap.)
+    const country = getCountry();
+    const cart = loadCart();
+    if (cart.length) {
+        const subtotal = cart.reduce((t, l) => t + l.price * l.quantity, 0);
+        const box = document.querySelector('[data-summary]');
+        box.hidden = false;
+        box.innerHTML = cart.map(l => {
+            const vars = Object.entries(l.variations || {}).map(([k, v]) => `${k}: ${v}`).join(' · ');
+            return `
+            <div style="display:grid;grid-template-columns:64px 1fr auto;gap:18px;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line)">
+              <img src="${esc(l.image_url || '')}" alt="" style="width:64px;height:64px;object-fit:cover">
+              <div style="display:flex;flex-direction:column;gap:3px">
+                <span style="font-size:14px">${esc(l.title)}</span>
+                <span class="muted" style="font-size:12px">${vars ? esc(vars) + ' · ' : ''}Qty ${l.quantity}</span>
+              </div>
+              <span style="font-size:14.5px">${money(l.price * l.quantity, country)}</span>
+            </div>`;
+        }).join('') + `
+            <div style="display:flex;justify-content:space-between;padding:16px 20px;font-size:16px">
+              <span>Items total</span><span>${money(subtotal, country)}</span>
+            </div>`;
+    }
+    try { localStorage.removeItem('sqc_cart_v1'); } catch (e) {}
+    paintCartCount();
+})();
+</script>
 </body>
 </html>

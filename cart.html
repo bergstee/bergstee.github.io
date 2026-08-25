@@ -1,118 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cart | SideQuest Co</title>
-    <link href="dist/styles.css?v=202608251059" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Marcellus&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Marcellus', sans-serif; }
-        .qty-btn { width: 1.75rem; height: 1.75rem; border: 1px solid #e5e7eb; }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your cart | SideQuest Co</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link href="css/storefront.css?v=1" rel="stylesheet">
 </head>
-<body class="bg-white min-h-screen">
-    <header class="py-6 mb-8 border-b border-gray-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center gap-2">
-                <a href="/"><img src="images/invert1.png" alt="SideQuest Co" class="h-12 sm:h-20"></a>
-                <a href="shop.html" class="text-sm font-medium text-primary hover:text-opacity-80">← Continue shopping</a>
-            </div>
-        </div>
-    </header>
+<body>
 
-    <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        <h1 class="text-3xl font-light text-primary mb-8">Your Cart</h1>
-        <div id="cart-lines" class="divide-y divide-gray-100"></div>
+<div class="announce">Every piece designed &amp; printed in-house in Canada · flat-rate shipping at checkout</div>
 
-        <div id="cart-summary" class="mt-8 hidden">
-            <div class="flex justify-between text-primary text-lg mb-1">
-                <span>Subtotal</span><span id="cart-subtotal"></span>
-            </div>
-            <p class="text-xs text-secondary mb-6">Shipping &amp; any applicable tax are calculated at checkout.</p>
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a href="home.html"><img class="header-logo" src="images/invert1.png" alt="SideQuest Co"></a>
+    <nav class="site-nav"><a href="shop.html">Shop</a></nav>
+    <div class="spacer"></div>
+    <div class="ccy" title="US prices include prepaid duty — nothing extra to pay on delivery">
+      <button data-ccy="CA">CAD</button>
+      <button data-ccy="US">USD</button>
+    </div>
+    <a href="cart.html">Cart<span class="muted" data-cart-count></span></a>
+  </div>
+  <div class="duty-note" data-duty-note hidden>US prices include prepaid duty — there is nothing to pay on delivery.</div>
+</header>
 
-            <p id="ship-to" class="text-sm text-primary mb-1"></p>
-            <p class="text-xs text-secondary mb-6">Prices and shipping are shown for your destination. To change it, use the currency switch on the <a href="shop.html" class="underline">shop page</a>.</p>
+<main class="wrap" style="max-width:960px;padding-top:52px;padding-bottom:88px">
+  <h1 class="page-title" style="margin:0 0 34px;font-size:34px;font-weight:400">Your cart</h1>
+  <div data-cart></div>
+</main>
 
-            <button id="checkout-btn" class="w-full bg-primary text-white py-3 text-sm font-medium hover:bg-opacity-90 transition-colors duration-300">
-                Checkout
-            </button>
-            <p id="pay-note" class="text-xs text-secondary mt-3 text-center"></p>
-        </div>
-        <p id="cart-empty" class="text-secondary hidden">Your cart is empty. <a href="shop.html" class="underline">Browse the shop →</a></p>
-    </main>
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <img src="images/invert1.png" alt="SideQuest Co" style="height:38px;width:fit-content">
+      <p class="prose muted" style="margin:0;font-size:15px">Designed &amp; 3D printed in Canada, one layer at a time.</p>
+    </div>
+    <div class="footer-links">
+      <a href="home.html">Home</a>
+      <a href="shop.html">Shop</a>
+      <span class="muted">sidequestco.ca</span>
+    </div>
+  </div>
+</footer>
 
-    <script src="js/store.js?v=202608251059"></script>
-    <script>
-        function esc(s) {
-            const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML;
+<script src="js/storefront.js?v=1"></script>
+<script>
+(() => {
+    const country = getCountry();
+    const host = document.querySelector('[data-cart]');
+
+    function paint() {
+        const cart = loadCart();
+        if (!cart.length) {
+            host.innerHTML = `
+              <div class="empty">
+                <p style="margin:0 0 8px;font-size:20px">Your shelf is waiting.</p>
+                <p class="prose muted" style="margin:0 0 26px;font-size:17px">Nothing here yet — go find your next small delight.</p>
+                <a class="btn" href="shop.html">Browse the shop</a>
+              </div>`;
+            return;
         }
+        const subtotal = cart.reduce((t, l) => t + l.price * l.quantity, 0);
+        host.innerHTML = `
+          <div>
+            ${cart.map(l => {
+                const vars = Object.entries(l.variations || {}).map(([k, v]) => `${k}: ${v}`).join(' · ') || 'Standard';
+                return `
+                <div class="cart-row">
+                  <img src="${esc(l.image_url || '')}" alt="${esc(l.title)}">
+                  <div class="cart-meta">
+                    <a href="item.html?id=${encodeURIComponent(l.listing_id)}" style="font-size:15px;line-height:1.4">${esc(l.title)}</a>
+                    <span class="muted" style="font-size:12.5px">${esc(vars)}</span>
+                    <a href="#" class="link-quiet" data-remove="${esc(l.key)}" style="width:fit-content">Remove</a>
+                  </div>
+                  <div class="qty">
+                    <button data-dec="${esc(l.key)}" aria-label="Decrease quantity">−</button>
+                    <span>${l.quantity}</span>
+                    <button data-inc="${esc(l.key)}" aria-label="Increase quantity">+</button>
+                  </div>
+                  <span class="cart-line">${money(l.price * l.quantity, country)}</span>
+                </div>`;
+            }).join('')}
+          </div>
+          <div class="cart-summary">
+            <div class="cart-summary-inner">
+              <div class="cart-total"><span>Subtotal</span><span>${money(subtotal, country)}</span></div>
+              <p class="muted" style="margin:0;font-size:12.5px;line-height:1.55">
+                Flat-rate shipping and taxes calculated at checkout. Checkout is securely handled by Stripe.
+                ${country === 'US' ? 'Duty on US orders is prepaid — nothing to pay on delivery.' : ''}
+              </p>
+              <button class="btn" data-checkout>Continue to checkout</button>
+              <a href="shop.html" class="muted" style="font-size:13px;text-align:center">← Keep browsing</a>
+            </div>
+          </div>`;
+    }
 
-        function render() {
-            const cart = loadCart();
-            const linesEl = document.getElementById('cart-lines');
-            const empty = document.getElementById('cart-empty');
-            const summary = document.getElementById('cart-summary');
-            linesEl.innerHTML = '';
-            if (cart.length === 0) {
-                empty.classList.remove('hidden');
-                summary.classList.add('hidden');
-                return;
-            }
-            empty.classList.add('hidden');
-            summary.classList.remove('hidden');
-            let subtotal = 0;
-            cart.forEach(l => {
-                subtotal += l.price * l.quantity;
-                const varText = Object.entries(l.variations || {}).map(([k, v]) => `${k}: ${v}`).join(', ');
-                const row = document.createElement('div');
-                row.className = 'py-4 flex gap-4 items-center';
-                row.innerHTML = `
-                    <div class="w-16 h-16 bg-gray-50 flex-shrink-0 overflow-hidden">
-                        ${l.image_url ? `<img src="${esc(l.image_url)}" class="w-full h-full object-cover" alt="">` : ''}
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm text-primary truncate">${esc(l.title)}</p>
-                        ${varText ? `<p class="text-xs text-secondary">${esc(varText)}</p>` : ''}
-                        <p class="text-sm text-primary mt-1">${money(l.price, getCountry())}</p>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button class="qty-btn" data-dec="${esc(l.key)}">−</button>
-                        <span class="w-8 text-center text-sm">${l.quantity}</span>
-                        <button class="qty-btn" data-inc="${esc(l.key)}">+</button>
-                    </div>`;
-                linesEl.appendChild(row);
-            });
-            const c = getCountry();
-            document.getElementById('cart-subtotal').textContent = money(subtotal, c);
-            document.getElementById('ship-to').textContent = c === 'US'
-                ? 'Shipping to the United States — duties prepaid, nothing owed on delivery.'
-                : 'Shipping within Canada — taxes calculated at checkout.';
-            document.getElementById('pay-note').textContent =
-                `Secure payment via Stripe. Prices in ${currencyLabel(c)}.`;
+    host.addEventListener('click', (e) => {
+        const dec = e.target.closest('[data-dec]');
+        const inc = e.target.closest('[data-inc]');
+        const rm = e.target.closest('[data-remove]');
+        const co = e.target.closest('[data-checkout]');
+        if (dec || inc) {
+            const el = dec || inc;
+            const key = el.dataset.dec || el.dataset.inc;
+            const line = loadCart().find(l => l.key === key);
+            if (line) setQuantity(key, line.quantity + (dec ? -1 : 1));
+            paint();
+        } else if (rm) {
+            e.preventDefault();
+            removeLine(rm.dataset.remove);
+            paint();
+        } else if (co) {
+            startCheckout(co);
         }
+    });
 
-        document.getElementById('cart-lines').addEventListener('click', e => {
-            const dec = e.target.closest('[data-dec]');
-            const inc = e.target.closest('[data-inc]');
-            const cart = loadCart();
-            if (dec) {
-                const l = cart.find(x => x.key === dec.dataset.dec);
-                if (l) setQuantity(l.key, l.quantity - 1);
-            } else if (inc) {
-                const l = cart.find(x => x.key === inc.dataset.inc);
-                if (l) setQuantity(l.key, l.quantity + 1);
-            } else return;
-            render();
-        });
-
-        document.getElementById('checkout-btn').addEventListener('click', () => {
-            startCheckout(getCountry());
-        });
-
-        render();
-    </script>
+    paint();
+})();
+</script>
 </body>
 </html>

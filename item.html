@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SideQuest Co</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link href="css/storefront.css?v=1" rel="stylesheet">
+</head>
+<body>
+
+<div class="announce">Every piece designed &amp; printed in-house in Canada · flat-rate shipping at checkout</div>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a href="home.html"><img class="header-logo" src="images/invert1.png" alt="SideQuest Co"></a>
+    <nav class="site-nav" data-nav></nav>
+    <div class="spacer"></div>
+    <input class="search" data-search placeholder="Search the shelves…" aria-label="Search products">
+    <div class="ccy" title="US prices include prepaid duty — nothing extra to pay on delivery">
+      <button data-ccy="CA">CAD</button>
+      <button data-ccy="US">USD</button>
+    </div>
+    <a href="cart.html">Cart<span class="muted" data-cart-count></span></a>
+  </div>
+  <div class="duty-note" data-duty-note hidden>US prices include prepaid duty — there is nothing to pay on delivery.</div>
+</header>
+
+<main class="wrap" style="padding-top:44px;padding-bottom:88px" data-main>
+  <p class="muted">Loading…</p>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <img src="images/invert1.png" alt="SideQuest Co" style="height:38px;width:fit-content">
+      <p class="prose muted" style="margin:0;font-size:15px">Designed &amp; 3D printed in Canada, one layer at a time.</p>
+    </div>
+    <div class="footer-links">
+      <a href="shop.html">Shop</a>
+      <a href="cart.html">Cart</a>
+      <span class="muted">sidequestco.ca</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/storefront.js?v=1"></script>
+<script>
+(async () => {
+    const country = getCountry();
+    const id = new URLSearchParams(location.search).get('id');
+    const main = document.querySelector('[data-main]');
+
+    let catalog;
+    try { catalog = await getCatalog(country); }
+    catch (e) { main.innerHTML = '<p class="muted">The shop is temporarily unavailable — please try again shortly.</p>'; return; }
+
+    const products = catalog.products;
+    const product = products.find(p => String(p.listing_id) === String(id));
+    if (!product) {
+        main.innerHTML = '<p class="muted">That piece is no longer available. <a href="shop.html">Back to the shop →</a></p>';
+        return;
+    }
+    document.title = product.title + ' | SideQuest Co';
+
+    const top = catalog.categories.filter(c => c.name !== 'Home & Gifts' && c.name !== 'Bookish')
+        .sort((a, b) => b.count - a.count).slice(0, 2);
+    document.querySelector('[data-nav]').innerHTML =
+        '<a href="shop.html">Shop</a>' +
+        top.map(c => `<a href="shop.html?c=${encodeURIComponent(c.name)}">${esc(c.name)}</a>`).join('');
+
+    let selection = defaultSelection(product);
+    let mainImage = product.image_url;
+    const gallery = (product.images && product.images.length ? product.images : [product.image_url]).filter(Boolean);
+
+    const related = products
+        .filter(p => p.listing_id !== product.listing_id && p.category === product.category && p.image_url)
+        .concat(products.filter(p => p.listing_id !== product.listing_id && p.category !== product.category && p.image_url))
+        .slice(0, 3);
+
+    function paint() {
+        const price = priceFor(product, selection);
+        const available = inStock(product, selection);
+        const opts = (product.properties || []).map(prop => `
+            <label class="opt">${esc(prop.name)}
+              <select data-opt="${esc(prop.name)}">
+                ${prop.values.map(v => `<option value="${esc(v)}"${selection[prop.name] === v ? ' selected' : ''}>${esc(v)}</option>`).join('')}
+              </select>
+            </label>`).join('');
+
+        main.innerHTML = `
+        <p class="muted" style="margin:0 0 28px;font-size:13px">
+          <a href="shop.html" class="muted">Shop</a> ·
+          <a href="shop.html?c=${encodeURIComponent(product.category)}" class="muted">${esc(product.category)}</a>
+        </p>
+        <div class="detail">
+          <div>
+            <img class="detail-main-img" data-main-img src="${esc(mainImage)}" alt="${esc(product.title)}">
+            ${gallery.length > 1 ? `<div class="thumbs">${gallery.map(u =>
+                `<img src="${esc(u)}" alt="" data-thumb="${esc(u)}" aria-current="${u === mainImage}">`).join('')}</div>` : ''}
+          </div>
+          <div>
+            <p class="eyebrow">${esc(product.category)}</p>
+            <h1>${esc(product.title)}</h1>
+            <p class="detail-price">${money(price, country)}</p>
+            ${product.blurb ? `<p class="detail-blurb">${esc(product.blurb)}…</p>` : ''}
+            <div class="opt-stack">${opts}</div>
+            <button class="btn btn-block" data-add ${available ? '' : 'disabled'}>${available ? 'Add to cart' : 'Sold out'}</button>
+            <div class="spec" style="margin-top:34px">
+              <div class="spec-row"><span class="muted">Material</span><span>PLA plastic, printed and finished in-house</span></div>
+              <div class="spec-row"><span class="muted">Made in</span><span>Canada</span></div>
+              <div class="spec-row"><span class="muted">Shipping</span><span>Flat-rate, calculated at checkout</span></div>
+              <div class="spec-row"><span class="muted">US orders</span><span>Duty prepaid — nothing to pay on delivery</span></div>
+            </div>
+          </div>
+        </div>
+        ${related.length ? `
+        <section style="margin-top:72px">
+          <h2 style="margin:0 0 26px;font-size:23px;font-weight:400">More like this</h2>
+          <div class="cols3">
+            ${related.map(p => `
+              <a class="card" href="item.html?id=${encodeURIComponent(p.listing_id)}">
+                <span class="card-img"><img src="${esc(p.image_url)}" alt="${esc(p.title)}" loading="lazy"></span>
+                <span style="padding:14px 16px 16px;display:flex;justify-content:space-between;align-items:baseline;gap:12px">
+                  <span class="card-title" style="min-height:0">${esc(p.title)}</span>
+                  <span style="font-size:14.5px;white-space:nowrap">${money(p.price, country)}</span>
+                </span>
+              </a>`).join('')}
+          </div>
+        </section>` : ''}`;
+    }
+
+    main.addEventListener('change', (e) => {
+        const sel = e.target.closest('[data-opt]');
+        if (sel) { selection[sel.dataset.opt] = sel.value; paint(); }
+    });
+    main.addEventListener('click', (e) => {
+        const thumb = e.target.closest('[data-thumb]');
+        if (thumb) { mainImage = thumb.dataset.thumb; paint(); return; }
+        const add = e.target.closest('[data-add]');
+        if (add && !add.disabled) {
+            addToCart(product, selection, priceFor(product, selection), 1);
+            add.textContent = 'Added ✓';
+            setTimeout(() => { add.textContent = 'Add to cart'; }, 1400);
+        }
+    });
+
+    paint();
+})();
+</script>
+</body>
+</html>
