@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop | SideQuest Co</title>
+    <link href="dist/styles.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Marcellus&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Marcellus', sans-serif; }
+        select { border: 1px solid #e5e7eb; padding: 0.35rem 0.5rem; font-size: 0.85rem; width: 100%; }
+    </style>
+</head>
+<body class="bg-white min-h-screen">
+    <header class="py-6 mb-8 border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center">
+                <a href="/"><img src="images/invert1.png" alt="SideQuest Co" class="h-20"></a>
+                <a href="cart.html" class="text-sm font-medium text-primary hover:text-opacity-80">Cart <span id="cart-count"></span></a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <h1 class="text-3xl font-light text-primary mb-2">Shop</h1>
+        <p class="text-secondary mb-8 text-sm">3D printed bookish decor — designed and printed in Canada. Ships to Canada &amp; the US.</p>
+        <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <p id="loading" class="text-secondary col-span-full">Loading products…</p>
+        </div>
+    </main>
+
+    <script src="js/store.js"></script>
+    <script>
+        function esc(s) {
+            const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML;
+        }
+
+        fetchProducts().then(products => {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = '';
+            products.forEach((p, idx) => {
+                const card = document.createElement('div');
+                card.className = 'flex flex-col border border-gray-100 hover:shadow-md transition-shadow duration-300';
+                const price = parseFloat(p.price);
+                const variations = Array.isArray(p.variations) ? p.variations : [];
+                const varSelects = variations.map((v, vi) => `
+                    <label class="block text-xs text-secondary mt-2">${esc(v.name)}
+                        <select data-card="${idx}" data-varname="${esc(v.name)}">
+                            ${v.options.map(o => `<option value="${esc(o.value)}">${esc(o.value)}${parseFloat(o.additional_cost) > 0 ? ` (+$${parseFloat(o.additional_cost).toFixed(2)})` : ''}</option>`).join('')}
+                        </select>
+                    </label>`).join('');
+                card.innerHTML = `
+                    <div class="aspect-square bg-gray-50 overflow-hidden">
+                        ${p.image_url ? `<img src="${esc(p.image_url)}" alt="${esc(p.title)}" loading="lazy" class="w-full h-full object-cover">` : ''}
+                    </div>
+                    <div class="p-4 flex flex-col flex-1">
+                        <h2 class="text-sm text-primary flex-1">${esc(p.title)}</h2>
+                        <p class="text-primary font-medium mt-2">CAD $${price.toFixed(2)}</p>
+                        ${varSelects}
+                        <button class="mt-3 bg-primary text-white py-2 text-sm hover:bg-opacity-90 transition-colors duration-300" data-add="${idx}">
+                            Add to cart
+                        </button>
+                    </div>`;
+                grid.appendChild(card);
+            });
+
+            grid.addEventListener('click', e => {
+                const btn = e.target.closest('[data-add]');
+                if (!btn) return;
+                const p = products[parseInt(btn.dataset.add, 10)];
+                const chosen = {};
+                grid.querySelectorAll(`select[data-card="${btn.dataset.add}"]`).forEach(sel => {
+                    chosen[sel.dataset.varname] = sel.value;
+                });
+                addToCart(p, 1, chosen);
+                btn.textContent = 'Added ✓';
+                setTimeout(() => { btn.textContent = 'Add to cart'; }, 1200);
+            });
+        }).catch(err => {
+            document.getElementById('loading').textContent = 'The shop is temporarily unavailable — please try again shortly.';
+            console.error(err);
+        });
+    </script>
+</body>
+</html>
