@@ -299,6 +299,35 @@ async function startCheckout(btn) {
     }
 }
 
+
+/* -------------------------------------------------------------- header nav */
+/* Which story collections sit in the top nav. Leave empty to pick the largest
+   automatically; list names to curate them by hand, e.g.
+   const NAV_CATEGORIES = ['ACOTAR', 'Fourth Wing', 'Bluey']; */
+const NAV_CATEGORIES = [];
+const NAV_MAX = 3;
+// Generic buckets make poor nav items — they say nothing about what's inside.
+const NAV_EXCLUDE = ['Home & Gifts', 'Bookish'];
+
+/** Renders the "Shop + collections" nav into any [data-nav] element. */
+function paintNav(categories) {
+    const host = document.querySelector('[data-nav]');
+    if (!host) return;
+    let picks;
+    if (NAV_CATEGORIES.length) {
+        picks = NAV_CATEGORIES
+            .map(name => categories.find(c => c.name === name))
+            .filter(Boolean);
+    } else {
+        picks = categories
+            .filter(c => !NAV_EXCLUDE.includes(c.name))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, NAV_MAX);
+    }
+    host.innerHTML = '<a href="shop.html">Shop</a>' +
+        picks.map(c => `<a href="shop.html?c=${encodeURIComponent(c.name)}">${esc(c.name)}</a>`).join('');
+}
+
 /* ------------------------------------------------- header/footer wiring */
 function initChrome() {
     paintCartCount();

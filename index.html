@@ -81,7 +81,7 @@
   </div>
 </footer>
 
-<script src="js/storefront.js?v=202608251226"></script>
+<script src="js/storefront.js?v=202608251227"></script>
 <script>
 (async () => {
     const country = getCountry();
@@ -91,11 +91,7 @@
         const byId = new Map(products.map(p => [p.listing_id, p]));
 
         // Nav: the two biggest story collections, so it reflects the catalogue.
-        const top = cat.categories.filter(c => c.name !== 'Home & Gifts' && c.name !== 'Bookish')
-            .sort((a, b) => b.count - a.count).slice(0, 2);
-        document.querySelector('[data-nav]').innerHTML =
-            '<a href="shop.html">Shop</a>' +
-            top.map(c => `<a href="shop.html?c=${encodeURIComponent(c.name)}">${esc(c.name)}</a>`).join('');
+        paintNav(cat.categories);
 
         document.querySelector('[data-view-all]').textContent = `View all ${products.length} →`;
 

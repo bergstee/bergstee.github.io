@@ -64,7 +64,7 @@
   </div>
 </footer>
 
-<script src="js/storefront.js?v=202608251226"></script>
+<script src="js/storefront.js?v=202608251227"></script>
 <script>
 (async () => {
     const country = getCountry();
@@ -87,11 +87,7 @@
     const products = catalog.products;
     const byId = new Map(products.map(p => [p.listing_id, p]));
 
-    const top = catalog.categories.filter(c => c.name !== 'Home & Gifts' && c.name !== 'Bookish')
-        .sort((a, b) => b.count - a.count).slice(0, 2);
-    document.querySelector('[data-nav]').innerHTML =
-        '<a href="shop.html">Shop</a>' +
-        top.map(c => `<a href="shop.html?c=${encodeURIComponent(c.name)}">${esc(c.name)}</a>`).join('');
+    paintNav(catalog.categories);
 
     function paintChips() {
         const names = ['All', ...catalog.categories.map(c => c.name)];
