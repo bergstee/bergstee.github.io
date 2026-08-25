@@ -8,9 +8,11 @@ const COUNTRY_KEY = 'sqc_country';
 
 
 /* ------------------------------------------------------------- analytics */
-/* First-party and anonymous: a random per-tab id, no cookies, no IP stored.
-   Set GA_MEASUREMENT_ID to also mirror events into Google Analytics 4. */
-const GA_MEASUREMENT_ID = '';   // e.g. 'G-XXXXXXXXXX'
+/* Two layers:
+   - Our own tracking is anonymous: a random per-tab id, no cookies, no IP.
+   - GA4 mirrors the same events. Note GA4 DOES set first-party cookies, so the
+     privacy notice has to say so; ad personalisation is off. */
+const GA_MEASUREMENT_ID = 'G-3C9HQGPMNE';
 const SESSION_KEY = 'sqc_session';
 
 function sessionId() {
@@ -62,8 +64,12 @@ function initGA() {
     window.dataLayer = window.dataLayer || [];
     window.gtag = function () { window.dataLayer.push(arguments); };
     window.gtag('js', new Date());
-    // No cookies for ad personalisation; keeps the shop out of consent-banner territory.
-    window.gtag('config', GA_MEASUREMENT_ID, { anonymize_ip: true, allow_google_signals: false });
+    // Ad personalisation and cross-device signals off — analytics only.
+    window.gtag('config', GA_MEASUREMENT_ID, {
+        anonymize_ip: true,
+        allow_google_signals: false,
+        allow_ad_personalization_signals: false,
+    });
 }
 
 /* ------------------------------------------------------------- currency */
