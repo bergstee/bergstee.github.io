@@ -186,7 +186,7 @@ function esc(s) { const d = document.createElement('div'); d.textContent = s == 
 
 function productCard(product, country) {
     const hasOpts = (product.properties || []).length > 0;
-    const href = 'item.html?id=' + encodeURIComponent(product.listing_id);
+    const href = product.slug ? `/p/${product.slug}/` : ('item.html?id=' + encodeURIComponent(product.listing_id));
     return `
     <article class="card" data-id="${esc(product.listing_id)}">
       <a class="card-img" href="${href}">
@@ -251,7 +251,7 @@ function paintQuickView() {
             <div class="opt-stack">${opts}</div>
             <div class="card-fill"></div>
             <button class="btn btn-block" data-qv-add ${available ? '' : 'disabled'}>${available ? 'Add to cart' : 'Sold out'}</button>
-            <a href="item.html?id=${encodeURIComponent(p.listing_id)}" class="link-quiet" style="text-align:center;margin:12px auto 0;width:fit-content">View full details</a>
+            <a href="${p.slug ? `/p/${p.slug}/` : ('item.html?id=' + encodeURIComponent(p.listing_id))}" class="link-quiet" style="text-align:center;margin:12px auto 0;width:fit-content">View full details</a>
           </div>
         </div>
       </div>`;
@@ -343,6 +343,82 @@ function paintNav(categories) {
         picks.map(c => `<a href="shop.html?c=${encodeURIComponent(c.name)}">${esc(c.name)}</a>`).join('');
 }
 
+
+/* --------------------------------------------------- pre-rendered pages */
+/* Product and category pages ship as real HTML for crawlers, with CAD prices
+   baked in at build time. Here we restate prices in the buyer's currency,
+   render the option selects, and wire up the cart. */
+async function hydratePreRendered() {
+    const main = document.querySelector('[data-main][data-listing-id]');
+    const priceEls = document.querySelectorAll('[data-price-for]');
+    if (!main && !priceEls.length && !document.querySelector('[data-nav]')) return;
+
+    let catalog;
+    try { catalog = await getCatalog(getCountry()); } catch (e) { return; }
+    const country = catalog.country;
+    paintNav(catalog.categories);
+    paintSaleBanner(catalog.sale);
+
+    const byId = new Map(catalog.products.map(p => [String(p.listing_id), p]));
+
+    // Category/related cards: restate the baked CAD price.
+    priceEls.forEach(el => {
+        const p = byId.get(el.dataset.priceFor);
+        if (!p) return;
+        el.innerHTML = (p.compare_at && p.compare_at > p.price
+            ? `<span class="was">${money(p.compare_at, country)}</span>` : '') + money(p.price, country);
+    });
+
+    if (!main) return;
+    const product = byId.get(main.dataset.listingId);
+    if (!product) return;   // withdrawn since the last build
+
+    let selection = defaultSelection(product);
+    const priceEl = main.querySelector('[data-price]');
+    const addBtn = main.querySelector('[data-add]');
+    const optHost = main.querySelector('[data-options]');
+
+    function paintPrice() {
+        const now = priceFor(product, selection);
+        const was = variantCompareAt(product, selection);
+        priceEl.innerHTML = (was ? `<span class="was">${money(was, country)}</span>` : '') + money(now, country) +
+            (catalog.sale ? `<span class="sale-flag">${catalog.sale.percent}% off</span>` : '');
+        const ok = inStock(product, selection);
+        addBtn.disabled = !ok;
+        addBtn.textContent = ok ? 'Add to cart' : 'Sold out';
+    }
+
+    if (optHost && (product.properties || []).length) {
+        optHost.innerHTML = product.properties.map(prop => `
+            <label class="opt">${esc(prop.name)}
+              <select data-opt="${esc(prop.name)}">
+                ${prop.values.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join('')}
+              </select>
+            </label>`).join('');
+        optHost.addEventListener('change', (e) => {
+            const sel = e.target.closest('[data-opt]');
+            if (sel) { selection[sel.dataset.opt] = sel.value; paintPrice(); }
+        });
+    }
+
+    main.addEventListener('click', (e) => {
+        const thumb = e.target.closest('[data-thumb]');
+        if (thumb) {
+            const hero = main.querySelector('.detail-main-img');
+            if (hero) hero.src = thumb.dataset.thumb;
+            return;
+        }
+        if (e.target.closest('[data-add]') && !addBtn.disabled) {
+            addToCart(product, selection, priceFor(product, selection), 1);
+            addBtn.textContent = 'Added ✓';
+            setTimeout(paintPrice, 1400);
+        }
+    });
+
+    paintPrice();
+    track('product_view', { listing_id: product.listing_id, category: product.category, value: product.price });
+}
+
 /* ------------------------------------------------- header/footer wiring */
 function initChrome() {
     paintCartCount();
@@ -372,4 +448,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initChrome();
     initGA();
     track('page_view');
+    hydratePreRendered();
 });

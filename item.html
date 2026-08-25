@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SideQuest Co</title>
+<meta name="robots" content="noindex,follow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
@@ -63,6 +64,8 @@
         main.innerHTML = '<p class="muted">That piece is no longer available. <a href="shop.html">Back to the shop →</a></p>';
         return;
     }
+    // Canonical home for a product is the pre-rendered /p/<slug>/ page.
+    if (product.slug) { location.replace('/p/' + product.slug + '/'); return; }
     document.title = product.title + ' | SideQuest Co';
     track('product_view', { listing_id: product.listing_id, category: product.category, value: product.price });
 

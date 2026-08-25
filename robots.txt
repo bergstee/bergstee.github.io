@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# Cart, checkout returns and the wholesale area hold nothing worth indexing.
+Disallow: /cart.html
+Disallow: /thanks.html
+Disallow: /item.html
+Disallow: /login.html
+Disallow: /products.html
+Disallow: /product.html
+Disallow: /interest-list.html
+Disallow: /wholesale-catalog.html
+
+Sitemap: https://sidequestco.ca/sitemap.xml
