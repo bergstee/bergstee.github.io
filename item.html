@@ -7,11 +7,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-<link href="css/storefront.css?v=1" rel="stylesheet">
+<link href="css/storefront.css?v=202608251217" rel="stylesheet">
 </head>
 <body>
 
-<div class="announce">Every piece designed &amp; printed in-house in Canada · flat-rate shipping at checkout</div>
+<div class="announce">Every piece printed &amp; hand-finished in our Canadian studio · flat-rate shipping at checkout</div>
 
 <header class="site-header">
   <div class="wrap header-inner">
@@ -36,7 +36,7 @@
   <div class="wrap footer-inner">
     <div style="display:flex;flex-direction:column;gap:8px">
       <img src="images/invert1.png" alt="SideQuest Co" style="height:38px;width:fit-content">
-      <p class="prose muted" style="margin:0;font-size:15px">Designed &amp; 3D printed in Canada, one layer at a time.</p>
+      <p class="prose muted" style="margin:0;font-size:15px">3D printed &amp; hand-finished in Canada, one layer at a time.</p>
     </div>
     <div class="footer-links">
       <a href="shop.html">Shop</a>
@@ -46,7 +46,7 @@
   </div>
 </footer>
 
-<script src="js/storefront.js?v=1"></script>
+<script src="js/storefront.js?v=202608251217"></script>
 <script>
 (async () => {
     const country = getCountry();
@@ -64,6 +64,7 @@
         return;
     }
     document.title = product.title + ' | SideQuest Co';
+    track('product_view', { listing_id: product.listing_id, category: product.category, value: product.price });
 
     const top = catalog.categories.filter(c => c.name !== 'Home & Gifts' && c.name !== 'Bookish')
         .sort((a, b) => b.count - a.count).slice(0, 2);
@@ -109,7 +110,7 @@
             <div class="opt-stack">${opts}</div>
             <button class="btn btn-block" data-add ${available ? '' : 'disabled'}>${available ? 'Add to cart' : 'Sold out'}</button>
             <div class="spec" style="margin-top:34px">
-              <div class="spec-row"><span class="muted">Material</span><span>PLA plastic, printed and finished in-house</span></div>
+              <div class="spec-row"><span class="muted">Material</span><span>PLA plastic, printed and hand-finished in our studio</span></div>
               <div class="spec-row"><span class="muted">Made in</span><span>Canada</span></div>
               <div class="spec-row"><span class="muted">Shipping</span><span>Flat-rate, calculated at checkout</span></div>
               <div class="spec-row"><span class="muted">US orders</span><span>Duty prepaid — nothing to pay on delivery</span></div>

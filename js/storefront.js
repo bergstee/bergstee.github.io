@@ -6,6 +6,65 @@ const STORE_API = 'https://shop-api.steph-server.ca/store';
 const CART_KEY = 'sqc_cart_v1';
 const COUNTRY_KEY = 'sqc_country';
 
+
+/* ------------------------------------------------------------- analytics */
+/* First-party and anonymous: a random per-tab id, no cookies, no IP stored.
+   Set GA_MEASUREMENT_ID to also mirror events into Google Analytics 4. */
+const GA_MEASUREMENT_ID = '';   // e.g. 'G-XXXXXXXXXX'
+const SESSION_KEY = 'sqc_session';
+
+function sessionId() {
+    try {
+        let id = sessionStorage.getItem(SESSION_KEY);
+        if (!id) {
+            id = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(36).slice(2));
+            sessionStorage.setItem(SESSION_KEY, id);
+        }
+        return id;
+    } catch (e) {
+        return 'no-storage';
+    }
+}
+
+function track(eventType, detail) {
+    const body = Object.assign({
+        session_id: sessionId(),
+        event_type: eventType,
+        path: location.pathname,
+        // Host only — a full referring URL can carry the visitor's search terms.
+        referrer: document.referrer ? new URL(document.referrer).host : '',
+        currency: getCountry() === 'US' ? 'USD' : 'CAD',
+    }, detail || {});
+    try {
+        const payload = JSON.stringify(body);
+        // sendBeacon survives the page unload that follows a checkout redirect.
+        if (navigator.sendBeacon) {
+            navigator.sendBeacon(`${STORE_API}/api/track`, new Blob([payload], { type: 'application/json' }));
+        } else {
+            fetch(`${STORE_API}/api/track`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: payload, keepalive: true,
+            }).catch(() => {});
+        }
+    } catch (e) {}
+    if (window.gtag) {
+        try { window.gtag('event', eventType, detail || {}); } catch (e) {}
+    }
+}
+
+function initGA() {
+    if (!GA_MEASUREMENT_ID) return;
+    const s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_MEASUREMENT_ID;
+    document.head.appendChild(s);
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { window.dataLayer.push(arguments); };
+    window.gtag('js', new Date());
+    // No cookies for ad personalisation; keeps the shop out of consent-banner territory.
+    window.gtag('config', GA_MEASUREMENT_ID, { anonymize_ip: true, allow_google_signals: false });
+}
+
 /* ------------------------------------------------------------- currency */
 function getCountry() {
     try {
@@ -56,6 +115,12 @@ function addToCart(product, selection, unitPrice, quantity) {
         quantity: quantity || 1, variations: selection || {},
     });
     saveCart(cart);
+    track('add_to_cart', {
+        listing_id: product.listing_id,
+        category: product.category,
+        value: Number(unitPrice),
+        quantity: quantity || 1,
+    });
 }
 function setQuantity(key, quantity) {
     let cart = loadCart();
@@ -129,6 +194,7 @@ function productCard(product, country) {
 let _qvProduct = null, _qvSelection = null;
 
 function openQuickView(product) {
+    track('quick_view', { listing_id: product.listing_id, category: product.category, value: product.price });
     _qvProduct = product;
     _qvSelection = defaultSelection(product);
     let host = document.getElementById('qv-host');
@@ -199,12 +265,17 @@ async function startCheckout(btn) {
     const cart = loadCart();
     if (!cart.length) return;
     if (btn) { btn.disabled = true; btn.textContent = 'Redirecting…'; }
+    track('begin_checkout', {
+        value: cart.reduce((t, l) => t + l.price * l.quantity, 0),
+        quantity: cart.reduce((t, l) => t + l.quantity, 0),
+    });
     try {
         const res = await fetch(`${STORE_API}/api/checkout`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 country: getCountry(),
+                session_id: sessionId(),
                 items: cart.map(l => ({
                     listing_id: l.listing_id,
                     quantity: l.quantity,
@@ -246,4 +317,8 @@ function initChrome() {
         });
     }
 }
-document.addEventListener('DOMContentLoaded', initChrome);
+document.addEventListener('DOMContentLoaded', () => {
+    initChrome();
+    initGA();
+    track('page_view');
+});
