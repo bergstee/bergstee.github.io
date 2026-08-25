@@ -36,16 +36,17 @@ function track(eventType, detail) {
         currency: getCountry() === 'US' ? 'USD' : 'CAD',
     }, detail || {});
     try {
-        const payload = JSON.stringify(body);
-        // sendBeacon survives the page unload that follows a checkout redirect.
-        if (navigator.sendBeacon) {
-            navigator.sendBeacon(`${STORE_API}/api/track`, new Blob([payload], { type: 'application/json' }));
-        } else {
-            fetch(`${STORE_API}/api/track`, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: payload, keepalive: true,
-            }).catch(() => {});
-        }
+        // keepalive lets the request outlive the page (e.g. the checkout
+        // redirect). sendBeacon can't be used here: a JSON content-type makes
+        // it a preflighted cross-origin request, which beacons can't perform,
+        // so the browser silently drops it.
+        fetch(`${STORE_API}/api/track`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+            keepalive: true,
+            mode: 'cors',
+        }).catch(() => {});
     } catch (e) {}
     if (window.gtag) {
         try { window.gtag('event', eventType, detail || {}); } catch (e) {}
