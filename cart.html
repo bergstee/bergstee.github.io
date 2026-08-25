@@ -46,7 +46,7 @@
   </div>
 </footer>
 
-<script src="js/storefront.js?v=202608251234"></script>
+<script src="js/storefront.js?v=202608251236"></script>
 <script>
 (() => {
     const country = getCountry();
@@ -94,6 +94,7 @@
               </p>
               <button class="btn" data-checkout>Continue to checkout</button>
               <a href="shop.html" class="muted" style="font-size:13px;text-align:center">← Keep browsing</a>
+              <a href="#" class="muted" data-clear style="font-size:12px;text-align:center">Clear cart</a>
             </div>
           </div>`;
     }
@@ -115,6 +116,10 @@
             paint();
         } else if (co) {
             startCheckout(co);
+        } else if (e.target.closest('[data-clear]')) {
+            e.preventDefault();
+            saveCart([]);
+            paint();
         }
     });
 
