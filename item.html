@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-<link href="css/storefront.css?v=202608251230" rel="stylesheet">
+<link href="css/storefront.css?v=202608251234" rel="stylesheet">
 </head>
 <body>
 
@@ -46,7 +46,7 @@
   </div>
 </footer>
 
-<script src="js/storefront.js?v=202608251230"></script>
+<script src="js/storefront.js?v=202608251234"></script>
 <script>
 (async () => {
     const country = getCountry();
@@ -67,6 +67,7 @@
     track('product_view', { listing_id: product.listing_id, category: product.category, value: product.price });
 
     paintNav(catalog.categories);
+    paintSaleBanner(catalog.sale);
 
     let selection = defaultSelection(product);
     let mainImage = product.image_url;
@@ -101,7 +102,9 @@
           <div>
             <p class="eyebrow">${esc(product.category)}</p>
             <h1>${esc(product.title)}</h1>
-            <p class="detail-price">${money(price, country)}</p>
+            <p class="detail-price">${variantCompareAt(product, selection)
+                ? `<span class="was">${money(variantCompareAt(product, selection), country)}</span>` : ''}${money(price, country)}${
+                catalog.sale ? `<span class="sale-flag">${esc(String(catalog.sale.percent))}% off</span>` : ''}</p>
             ${product.blurb ? `<p class="detail-blurb">${esc(product.blurb)}…</p>` : ''}
             <div class="opt-stack">${opts}</div>
             <button class="btn btn-block" data-add ${available ? '' : 'disabled'}>${available ? 'Add to cart' : 'Sold out'}</button>

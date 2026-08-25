@@ -168,6 +168,13 @@ function priceFor(product, selection) {
     const v = matchVariant(product, selection);
     return v && v.price != null ? v.price : product.price;
 }
+/** Pre-sale price of the chosen combination, or null when nothing is on sale. */
+function variantCompareAt(product, selection) {
+    const v = matchVariant(product, selection);
+    const was = v && v.compare_at != null ? v.compare_at : product.compare_at;
+    const now = priceFor(product, selection);
+    return was != null && was > now ? was : null;
+}
 function inStock(product, selection) {
     if (!product.variants || !product.variants.length) return true;
     const v = matchVariant(product, selection);
@@ -189,7 +196,8 @@ function productCard(product, country) {
         <a class="card-title" href="${href}">${esc(product.title)}</a>
         <div class="card-fill"></div>
         <div class="card-price-row">
-          <span class="card-price">${product.price_varies && !hasOpts ? 'from ' : ''}${money(product.price, country)}</span>
+          <span class="card-price">${product.price_varies && !hasOpts ? 'from ' : ''}${product.compare_at && product.compare_at > product.price
+                ? `<span class="was">${money(product.compare_at, country)}</span>` : ''}${money(product.price, country)}</span>
           <a href="#" class="link-quiet" data-quick="${esc(product.listing_id)}">Quick view</a>
         </div>
         <button class="btn btn-sm" data-act="${esc(product.listing_id)}">${hasOpts ? 'Choose options' : 'Add to cart'}</button>
@@ -239,7 +247,7 @@ function paintQuickView() {
           <div class="qv-body">
             <button class="qv-close" data-qv-close aria-label="Close">&times;</button>
             <h2>${esc(p.title)}</h2>
-            <p class="qv-price">${money(price, country)}</p>
+            <p class="qv-price">${variantCompareAt(p, _qvSelection) ? `<span class="was">${money(variantCompareAt(p, _qvSelection), country)}</span>` : ''}${money(price, country)}</p>
             <div class="opt-stack">${opts}</div>
             <div class="card-fill"></div>
             <button class="btn btn-block" data-qv-add ${available ? '' : 'disabled'}>${available ? 'Add to cart' : 'Sold out'}</button>
@@ -308,6 +316,13 @@ const NAV_CATEGORIES = [];
 const NAV_MAX = 3;
 // Generic buckets make poor nav items: they say nothing about what's inside.
 const NAV_EXCLUDE = ['Home & Gifts', 'Bookish'];
+
+/** Puts the sale on the announcement bar, if one is running. */
+function paintSaleBanner(sale) {
+    if (!sale) return;
+    const bar = document.querySelector('.announce');
+    if (bar) bar.textContent = sale.label + ' · shipping calculated at checkout';
+}
 
 /** Renders the "Shop + collections" nav into any [data-nav] element. */
 function paintNav(categories) {

@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-<link href="css/storefront.css?v=202608251230" rel="stylesheet">
+<link href="css/storefront.css?v=202608251234" rel="stylesheet">
 </head>
 <body>
 
@@ -46,7 +46,7 @@
   </div>
 </footer>
 
-<script src="js/storefront.js?v=202608251230"></script>
+<script src="js/storefront.js?v=202608251234"></script>
 <script>
 (() => {
     const country = getCountry();
@@ -89,7 +89,7 @@
             <div class="cart-summary-inner">
               <div class="cart-total"><span>Subtotal</span><span>${money(subtotal, country)}</span></div>
               <p class="muted" style="margin:0;font-size:12.5px;line-height:1.55">
-                Shipping and taxes are calculated at checkout. Checkout is securely handled by Stripe.
+                Sale prices are already applied. Shipping and taxes are calculated at checkout. Checkout is securely handled by Stripe.
                 ${country === 'US' ? 'Duty on US orders is prepaid, so there is nothing to pay on delivery.' : ''}
               </p>
               <button class="btn" data-checkout>Continue to checkout</button>

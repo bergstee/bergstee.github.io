@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-<link href="css/storefront.css?v=202608251230" rel="stylesheet">
+<link href="css/storefront.css?v=202608251234" rel="stylesheet">
 </head>
 <body>
 
@@ -81,7 +81,7 @@
   </div>
 </footer>
 
-<script src="js/storefront.js?v=202608251230"></script>
+<script src="js/storefront.js?v=202608251234"></script>
 <script>
 (async () => {
     const country = getCountry();
@@ -92,6 +92,7 @@
 
         // Nav: the two biggest story collections, so it reflects the catalogue.
         paintNav(cat.categories);
+    paintSaleBanner(cat.sale);
 
         document.querySelector('[data-view-all]').textContent = `View all ${products.length} →`;
 
