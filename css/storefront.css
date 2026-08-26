@@ -220,3 +220,19 @@ select {
     font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
     color: var(--ink-soft); margin: 0 0 2px;
 }
+
+/* ------------------------------------------------------- etsy reviews */
+.etsy-reviews {
+    display: block; border: 1px solid var(--line); background: var(--warm-2);
+    padding: 14px 16px; margin: 0 0 30px; font-size: 13.5px; line-height: 1.5;
+}
+.etsy-reviews:hover { border-color: var(--line-strong); color: var(--ink); }
+.etsy-reviews .stars { color: var(--ink); letter-spacing: 2px; margin-right: 6px; }
+.etsy-reviews .go { display: block; margin-top: 4px; color: var(--ink-soft); font-size: 12.5px; }
+.trust-line {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    flex-wrap: wrap; padding: 18px 16px; border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line); background: var(--warm-2);
+    font-size: 14px; text-align: center;
+}
+.trust-line .stars { letter-spacing: 2px; }
