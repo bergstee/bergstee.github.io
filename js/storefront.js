@@ -185,6 +185,16 @@ function inStock(product, selection) {
     return v ? v.in_stock !== false : false;
 }
 
+/* Per-image object-position from the curation settings (portrait photos in
+   square crops). Keyed by Etsy image id, recoverable from the url. */
+function focusFor(listingId, url) {
+    const cur = (_catalog && _catalog.curation) || {};
+    const focus = cur.image_focus || {};
+    const m = String(url || '').match(/\/(\d{6,})\/il_/);
+    const pos = m && focus[String(listingId)] && focus[String(listingId)][m[1]];
+    return pos ? ` style="object-position:${pos}"` : '';
+}
+
 /* --------------------------------------------------------------- render */
 function esc(s) { const d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
 
@@ -194,7 +204,7 @@ function productCard(product, country) {
     return `
     <article class="card" data-id="${esc(product.listing_id)}">
       <a class="card-img" href="${href}">
-        ${product.image_url ? `<img src="${esc(product.image_url)}" alt="${esc(product.title)}" loading="lazy">` : ''}
+        ${product.image_url ? `<img src="${esc(product.image_url)}" alt="${esc(product.title)}" loading="lazy"${focusFor(product.listing_id, product.image_url)}>` : ''}
       </a>
       <div class="card-body">
         <a class="card-title" href="${href}">${esc(product.title)}</a>
@@ -247,7 +257,7 @@ function paintQuickView() {
       <div class="qv-overlay" role="dialog" aria-modal="true" aria-label="${esc(p.title)}">
         <div class="qv-scrim" data-qv-close></div>
         <div class="qv-panel">
-          ${p.image_url ? `<img src="${esc(p.image_url)}" alt="${esc(p.title)}">` : '<div></div>'}
+          ${p.image_url ? `<img src="${esc(p.image_url)}" alt="${esc(p.title)}"${focusFor(p.listing_id, p.image_url)}>` : '<div></div>'}
           <div class="qv-body">
             <button class="qv-close" data-qv-close aria-label="Close">&times;</button>
             <h2>${esc(p.title)}</h2>

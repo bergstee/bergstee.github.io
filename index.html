@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-<link href="css/storefront.css?v=202608271239" rel="stylesheet">
+<link href="css/storefront.css?v=202608271255" rel="stylesheet">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "SideQuest Co", "url": "https://sidequestco.ca/", "logo": "https://sidequestco.ca/images/invert1.png", "description": "3D printed decor for readers, printed and hand-finished in Alberta, Canada.", "email": "shop@sidequestco.ca", "address": {"@type": "PostalAddress", "addressRegion": "AB", "addressCountry": "CA"}, "sameAs": ["https://www.instagram.com/shopsidequestco/", "https://www.tiktok.com/@side.quest.co", "https://www.etsy.com/shop/SideQuestCoShop"]}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "SideQuest Co", "url": "https://sidequestco.ca/", "potentialAction": {"@type": "SearchAction", "target": {"@type": "EntryPoint", "urlTemplate": "https://sidequestco.ca/shop.html?q={search_term_string}"}, "query-input": "required name=search_term_string"}}</script>
 </head>
@@ -102,7 +102,7 @@
   </div>
 </footer>
 
-<script src="js/storefront.js?v=202608271239"></script>
+<script src="js/storefront.js?v=202608271255"></script>
 <script>
 (async () => {
     const country = getCountry();
@@ -135,9 +135,11 @@
             ${heroB ? `<img class="hero-img-2" src="${esc(heroB.image_url)}" alt="${esc(heroB.title)}">` : ''}`;
 
         // Collections: three largest story categories, each with a real product image.
-        const collections = cat.categories
-            .filter(c => c.name !== 'Home & Gifts')
-            .sort((a, b) => b.count - a.count).slice(0, 3);
+        const byName = Object.fromEntries(cat.categories.map(c => [c.name, c]));
+        const collections = (cur.collection_categories && cur.collection_categories.length)
+            ? cur.collection_categories.map(n => byName[n]).filter(Boolean)
+            : cat.categories.filter(c => c.name !== 'Home & Gifts')
+                .sort((a, b) => b.count - a.count).slice(0, 3);
         document.querySelector('[data-collections]').innerHTML = collections.map(c => {
             // Hand-picked tile images per category; otherwise the first
             // product alphabetically wins, which lands on odd choices (the

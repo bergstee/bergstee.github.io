@@ -265,3 +265,6 @@ select {
     text-align: center; font-size: 13px; padding: 9px 16px;
 }
 .intl-note a { border-bottom: 1px solid var(--line-mid); }
+
+/* Collections can hold more than three tiles when curated. */
+[data-collections].cols3 { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
