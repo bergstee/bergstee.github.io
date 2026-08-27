@@ -145,6 +145,10 @@ async function getCatalog(country) {
     const res = await fetch(`${STORE_API}/api/products?country=${encodeURIComponent(c)}`);
     if (!res.ok) throw new Error('Could not load the shop');
     _catalog = await res.json();
+    try {
+        if (_catalog.visitor_country) sessionStorage.setItem('sqc_geo', _catalog.visitor_country);
+    } catch (e) {}
+    paintIntlNote();
     return _catalog;
 }
 
@@ -419,6 +423,26 @@ async function hydratePreRendered() {
     track('product_view', { listing_id: product.listing_id, category: product.category, value: product.price });
 }
 
+
+/* ------------------------------------------------- international visitors */
+/* The site only ships to Canada and the US; a checkout from anywhere else
+   fails at Stripe's address step. Etsy handles international properly (its
+   IOSS registration covers EU VAT), so send those visitors there instead of
+   letting them hit a wall with a full cart. */
+function paintIntlNote() {
+    let geo = null;
+    try { geo = sessionStorage.getItem('sqc_geo'); } catch (e) {}
+    if (!geo || geo === 'CA' || geo === 'US' || geo === 'XX') return;
+    if (document.querySelector('.intl-note')) return;
+    const header = document.querySelector('.site-header');
+    if (!header) return;
+    const note = document.createElement('div');
+    note.className = 'intl-note';
+    note.innerHTML = 'Outside Canada and the US? We ship worldwide from ' +
+        '<a href="https://www.etsy.com/shop/SideQuestCoShop" rel="noopener" target="_blank">our Etsy shop</a>.';
+    header.insertAdjacentElement('afterend', note);
+}
+
 /* ------------------------------------------------- header/footer wiring */
 function initChrome() {
     paintCartCount();
@@ -448,5 +472,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initChrome();
     initGA();
     track('page_view');
+    paintIntlNote();
     hydratePreRendered();
 });
