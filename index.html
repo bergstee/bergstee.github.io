@@ -119,8 +119,15 @@
 
         // Hero: two products with imagery, picked deterministically.
         const withImg = products.filter(p => p.image_url);
-        const heroA = withImg.find(p => /suriel|figurine/i.test(p.title)) || withImg[0];
-        const heroB = withImg.find(p => p !== heroA && /stack|game|bookshelf|tracker/i.test(p.title)) || withImg[1];
+        // Hand-picked hero pieces: the ACOTAR Dresser and the Princess Donut
+        // figure (the shop's best seller). Falls back to a heuristic if either
+        // listing ever goes inactive.
+        const HERO_LISTING_IDS = ['1765716672', '4448382738'];
+        const picked = HERO_LISTING_IDS
+            .map(id => withImg.find(p => String(p.listing_id) === id))
+            .filter(Boolean);
+        const heroA = picked[0] || withImg.find(p => /suriel|figurine/i.test(p.title)) || withImg[0];
+        const heroB = picked[1] || withImg.find(p => p !== heroA && /stack|game|bookshelf|tracker/i.test(p.title)) || withImg[1];
         document.querySelector('[data-hero]').innerHTML = `
             ${heroA ? `<img class="hero-img-1" src="${esc(heroA.image_url)}" alt="${esc(heroA.title)}">` : ''}
             ${heroB ? `<img class="hero-img-2" src="${esc(heroB.image_url)}" alt="${esc(heroB.title)}">` : ''}`;
