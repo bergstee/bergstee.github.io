@@ -122,7 +122,9 @@
         // Hand-picked hero pieces: the ACOTAR Dresser and the Princess Donut
         // figure (the shop's best seller). Falls back to a heuristic if either
         // listing ever goes inactive.
-        const HERO_LISTING_IDS = ['1765716672', '4448382738'];
+        const cur = cat.curation || {};
+        const HERO_LISTING_IDS = (cur.hero_listing_ids && cur.hero_listing_ids.length)
+            ? cur.hero_listing_ids : ['1765716672', '4448382738'];
         const picked = HERO_LISTING_IDS
             .map(id => withImg.find(p => String(p.listing_id) === id))
             .filter(Boolean);
@@ -140,7 +142,7 @@
             // Hand-picked tile images per category; otherwise the first
             // product alphabetically wins, which lands on odd choices (the
             // Bookish tile was a bag of blank books).
-            const COLLECTION_IMAGE_IDS = { 'Bookish': '4315300937' };
+            const COLLECTION_IMAGE_IDS = cur.collection_images || { 'Bookish': '4315300937' };
             const pinnedId = COLLECTION_IMAGE_IDS[c.name];
             const hero = (pinnedId && products.find(p => String(p.listing_id) === pinnedId && p.image_url))
                 || products.find(p => p.category === c.name && p.image_url);
@@ -155,7 +157,8 @@
 
         // Most loved: hand-picked first (Darrow, the Red Rising Reaper), then a
         // spread across categories so the row isn't four near-identical items.
-        const FEATURED_LISTING_IDS = ['4496976969'];
+        const FEATURED_LISTING_IDS = (cur.featured_listing_ids && cur.featured_listing_ids.length)
+            ? cur.featured_listing_ids : ['4496976969'];
         const featured = FEATURED_LISTING_IDS
             .map(id => products.find(p => String(p.listing_id) === id && p.image_url))
             .filter(Boolean);
