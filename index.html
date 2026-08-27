@@ -153,11 +153,16 @@
             </a>`;
         }).join('');
 
-        // Most loved: a spread across categories rather than four near-identical items.
-        const seen = new Set(), featured = [];
+        // Most loved: hand-picked first (Darrow, the Red Rising Reaper), then a
+        // spread across categories so the row isn't four near-identical items.
+        const FEATURED_LISTING_IDS = ['4496976969'];
+        const featured = FEATURED_LISTING_IDS
+            .map(id => products.find(p => String(p.listing_id) === id && p.image_url))
+            .filter(Boolean);
+        const seen = new Set(featured.map(p => p.category));
         for (const p of products) {
             if (featured.length >= 4) break;
-            if (!p.image_url || seen.has(p.category)) continue;
+            if (!p.image_url || seen.has(p.category) || featured.includes(p)) continue;
             seen.add(p.category); featured.push(p);
         }
         document.querySelector('[data-featured]').innerHTML =
