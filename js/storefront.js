@@ -326,7 +326,7 @@ async function startCheckout(btn) {
 /* Which story collections sit in the top nav. Leave empty to pick the largest
    automatically; list names to curate them by hand, e.g.
    const NAV_CATEGORIES = ['ACOTAR', 'Fourth Wing', 'Bluey']; */
-const NAV_CATEGORIES = [];
+const NAV_CATEGORIES = ['Dungeon Crawler Carl', 'ACOTAR', 'Fourth Wing', 'Red Rising'];
 const NAV_MAX = 3;
 // Generic buckets make poor nav items: they say nothing about what's inside.
 const NAV_EXCLUDE = ['Home & Gifts', 'Bookish'];
