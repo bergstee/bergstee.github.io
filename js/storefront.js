@@ -28,7 +28,38 @@ function sessionId() {
     }
 }
 
+/* Campaign attribution.
+   The tags on the FIRST page of a visit say where the visitor came from. They
+   are stashed for the tab and sent with every event, so the acquisition source
+   survives internal navigation and the round trip through Stripe — the server
+   keeps the first one it is told and ignores the rest. Only the five standard
+   utm_* fields are kept, and nothing here is a cross-site identifier. */
+const ATTRIBUTION_KEY = 'sqc_attribution';
+const UTM_FIELDS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+
+function firstTouch() {
+    try {
+        const stored = sessionStorage.getItem(ATTRIBUTION_KEY);
+        if (stored) return JSON.parse(stored);
+        const params = new URLSearchParams(location.search);
+        const utm = {};
+        for (const field of UTM_FIELDS) {
+            const value = (params.get(field) || '').trim().slice(0, 64);
+            if (value) utm[field] = value;
+        }
+        const touch = { utm, landing_path: location.pathname };
+        // Store even when empty: an untagged first page is itself the answer,
+        // and re-reading it stops a later ?utm_source= from being mistaken for
+        // the start of the visit.
+        sessionStorage.setItem(ATTRIBUTION_KEY, JSON.stringify(touch));
+        return touch;
+    } catch (e) {
+        return { utm: {}, landing_path: location.pathname };
+    }
+}
+
 function track(eventType, detail) {
+    const touch = firstTouch();
     const body = Object.assign({
         session_id: sessionId(),
         event_type: eventType,
@@ -36,6 +67,8 @@ function track(eventType, detail) {
         // Host only, since a full referring URL can carry the visitor's search terms.
         referrer: document.referrer ? new URL(document.referrer).host : '',
         currency: getCountry() === 'US' ? 'USD' : 'CAD',
+        utm: touch.utm,
+        landing_path: touch.landing_path,
     }, detail || {});
     try {
         // keepalive lets the request outlive the page (e.g. the checkout
