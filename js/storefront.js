@@ -13,6 +13,12 @@ const COUNTRY_KEY = 'sqc_country';
    - GA4 mirrors the same events. Note GA4 DOES set first-party cookies, so the
      privacy notice has to say so; ad personalisation is off. */
 const GA_MEASUREMENT_ID = 'G-3C9HQGPMNE';
+/* Pinterest tag (ads.pinterest.com > Conversions > Pinterest tag). Empty = off.
+   Like GA it sets first-party cookies (_pin_unauth, _pinterest_ct_ua), which
+   the privacy notice lists. Purchases carry the Stripe session id as event_id
+   so the server-side Conversions API copy of the same sale de-duplicates. */
+const PINTEREST_TAG_ID = '2613974143809';
+const PINTEREST_EVENTS = { page_view: 'pagevisit', product_view: 'pagevisit', add_to_cart: 'addtocart', purchase: 'checkout' };
 const SESSION_KEY = 'sqc_session';
 
 function sessionId() {
@@ -86,6 +92,31 @@ function track(eventType, detail) {
     if (window.gtag) {
         try { window.gtag('event', eventType, detail || {}); } catch (e) {}
     }
+    if (window.pintrk && PINTEREST_EVENTS[eventType]) {
+        try {
+            const d = detail || {};
+            const data = { currency: getCountry() === 'US' ? 'USD' : 'CAD' };
+            if (d.value != null) data.value = Number(d.value);
+            if (d.quantity != null) data.order_quantity = Number(d.quantity);
+            if (d.order_id) { data.order_id = d.order_id; data.event_id = d.order_id; }
+            if (d.listing_id) data.line_items = [{ product_id: String(d.listing_id), product_category: d.category || undefined }];
+            window.pintrk('track', PINTEREST_EVENTS[eventType], data);
+        } catch (e) {}
+    }
+}
+
+function initPinterest() {
+    if (!PINTEREST_TAG_ID) return;
+    !function (e) {
+        if (!window.pintrk) {
+            window.pintrk = function () { window.pintrk.queue.push(Array.prototype.slice.call(arguments)); };
+            const n = window.pintrk; n.queue = []; n.version = '3.0';
+            const t = document.createElement('script'); t.async = !0; t.src = e;
+            const r = document.getElementsByTagName('script')[0]; r.parentNode.insertBefore(t, r);
+        }
+    }('https://s.pinimg.com/ct/core.js');
+    window.pintrk('load', PINTEREST_TAG_ID);
+    window.pintrk('page');
 }
 
 function initGA() {
@@ -514,6 +545,7 @@ function initChrome() {
 document.addEventListener('DOMContentLoaded', () => {
     initChrome();
     initGA();
+    initPinterest();
     track('page_view');
     paintIntlNote();
     hydratePreRendered();
