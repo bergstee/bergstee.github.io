@@ -182,7 +182,7 @@ function addToCart(product, selection, unitPrice, quantity) {
     if (existing) existing.quantity += (quantity || 1);
     else cart.push({
         key, listing_id: product.listing_id, title: product.title,
-        price: Number(unitPrice), image_url: product.image_url,
+        price: Number(unitPrice), duty: dutyIncluded(product, selection), image_url: product.image_url,
         quantity: quantity || 1, variations: selection || {},
     });
     saveCart(cart);
@@ -242,6 +242,18 @@ function variantCompareAt(product, selection) {
     const was = v && v.compare_at != null ? v.compare_at : product.compare_at;
     const now = priceFor(product, selection);
     return was != null && was > now ? was : null;
+}
+/** US only: how much of the chosen price is prepaid US import duty (0 otherwise). */
+function dutyIncluded(product, selection) {
+    const v = matchVariant(product, selection);
+    const d = v && v.duty_included != null ? v.duty_included : product.duty_included;
+    return Number(d) || 0;
+}
+/** Small line under a US price so the duty at checkout is no surprise. */
+function dutyNote(amount, country) {
+    return amount > 0
+        ? `<span class="duty-incl">Includes ${money(amount, country)} US import duty, prepaid. Nothing to pay on delivery.</span>`
+        : '';
 }
 function inStock(product, selection) {
     if (!product.variants || !product.variants.length) return true;
@@ -326,6 +338,7 @@ function paintQuickView() {
             <button class="qv-close" data-qv-close aria-label="Close">&times;</button>
             <h2>${esc(p.title)}</h2>
             <p class="qv-price">${variantCompareAt(p, _qvSelection) ? `<span class="was">${money(variantCompareAt(p, _qvSelection), country)}</span>` : ''}${money(price, country)}</p>
+            ${dutyNote(dutyIncluded(p, _qvSelection), country)}
             <div class="opt-stack">${opts}</div>
             <div class="card-fill"></div>
             <button class="btn btn-block" data-qv-add ${available ? '' : 'disabled'}>${available ? 'Add to cart' : 'Sold out'}</button>
@@ -460,7 +473,8 @@ async function hydratePreRendered() {
         const now = priceFor(product, selection);
         const was = variantCompareAt(product, selection);
         priceEl.innerHTML = (was ? `<span class="was">${money(was, country)}</span>` : '') + money(now, country) +
-            (catalog.sale ? `<span class="sale-flag">${catalog.sale.percent}% off</span>` : '');
+            (catalog.sale ? `<span class="sale-flag">${catalog.sale.percent}% off</span>` : '') +
+            dutyNote(dutyIncluded(product, selection), country);
         const ok = inStock(product, selection);
         addBtn.disabled = !ok;
         addBtn.textContent = ok ? 'Add to cart' : 'Sold out';

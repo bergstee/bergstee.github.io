@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-<link href="css/storefront.css?v=202608271255" rel="stylesheet">
+<link href="css/storefront.css?v=202611131600" rel="stylesheet">
 </head>
 <body>
 
@@ -31,7 +31,7 @@
     </div>
     <a href="cart.html">Cart<span class="muted" data-cart-count></span></a>
   </div>
-  <div class="duty-note" data-duty-note hidden>US prices include prepaid duty, so there is nothing to pay on delivery.</div>
+  <div class="duty-note" data-duty-note hidden>US prices include the US import duty. We prepay it and show it as its own line at checkout, so there is nothing to pay on delivery.</div>
 </header>
 
 <main class="wrap" style="max-width:960px;padding-top:52px;padding-bottom:88px">
@@ -60,7 +60,7 @@
   </div>
 </footer>
 
-<script src="js/storefront.js?v=202610211200"></script>
+<script src="js/storefront.js?v=202611131600"></script>
 <script>
 (() => {
     const country = getCountry();
@@ -78,6 +78,13 @@
             return;
         }
         const subtotal = cart.reduce((t, l) => t + l.price * l.quantity, 0);
+        // US: prices are all-in; show how much is the prepaid import duty,
+        // which checkout lists as its own line.
+        const duty = country === 'US'
+            ? cart.reduce((t, l) => t + (Number(l.duty) || 0) * l.quantity, 0) : 0;
+        const dutyRows = duty > 0 ? `
+              <div class="cart-sub"><span>Items</span><span>${money(subtotal - duty, country)}</span></div>
+              <div class="cart-sub"><span>US import duty, prepaid</span><span>${money(duty, country)}</span></div>` : '';
         host.innerHTML = `
           <div>
             ${cart.map(l => {
@@ -101,10 +108,11 @@
           </div>
           <div class="cart-summary">
             <div class="cart-summary-inner">
+              ${dutyRows}
               <div class="cart-total"><span>Subtotal</span><span>${money(subtotal, country)}</span></div>
               <p class="muted" style="margin:0;font-size:12.5px;line-height:1.55">
                 Sale prices are already applied. Shipping and taxes are calculated at checkout. Checkout is securely handled by Stripe.
-                ${country === 'US' ? 'Duty on US orders is prepaid, so there is nothing to pay on delivery.' : ''}
+                ${country === 'US' ? 'The US import duty on Canadian-made goods is included in our US prices. We pay it to US Customs for you and list it on your receipt, so there is nothing to pay on delivery.' : ''}
               </p>
               <button class="btn" data-checkout>Continue to checkout</button>
               <a href="shop.html" class="muted" style="font-size:13px;text-align:center">← Keep browsing</a>
@@ -138,6 +146,21 @@
     });
 
     paint();
+
+    // Cart lines saved before the duty line existed have no duty amount; fill
+    // it in from the live catalog so the breakdown is shown for them too.
+    if (country === 'US' && loadCart().some(l => l.duty == null)) {
+        getCatalog(country).then(cat => {
+            const byId = new Map(cat.products.map(p => [String(p.listing_id), p]));
+            const cart = loadCart();
+            cart.forEach(l => {
+                const p = byId.get(String(l.listing_id));
+                if (l.duty == null && p) l.duty = dutyIncluded(p, l.variations || {});
+            });
+            saveCart(cart);
+            paint();
+        }).catch(() => {});
+    }
 })();
 </script>
 </body>

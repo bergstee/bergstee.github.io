@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-<link href="css/storefront.css?v=202608271255" rel="stylesheet">
+<link href="css/storefront.css?v=202611131600" rel="stylesheet">
 </head>
 <body>
 
@@ -32,7 +32,7 @@
     </div>
     <a href="cart.html">Cart<span class="muted" data-cart-count></span></a>
   </div>
-  <div class="duty-note" data-duty-note hidden>US prices include prepaid duty, so there is nothing to pay on delivery.</div>
+  <div class="duty-note" data-duty-note hidden>US prices include the US import duty. We prepay it and show it as its own line at checkout, so there is nothing to pay on delivery.</div>
 </header>
 
 <main class="wrap" style="padding-top:44px;padding-bottom:88px" data-main>
@@ -60,7 +60,7 @@
   </div>
 </footer>
 
-<script src="js/storefront.js?v=202610211200"></script>
+<script src="js/storefront.js?v=202611131600"></script>
 <script>
 (async () => {
     const country = getCountry();
@@ -120,7 +120,8 @@
             <h1>${esc(product.title)}</h1>
             <p class="detail-price">${variantCompareAt(product, selection)
                 ? `<span class="was">${money(variantCompareAt(product, selection), country)}</span>` : ''}${money(price, country)}${
-                catalog.sale ? `<span class="sale-flag">${esc(String(catalog.sale.percent))}% off</span>` : ''}</p>
+                catalog.sale ? `<span class="sale-flag">${esc(String(catalog.sale.percent))}% off</span>` : ''}${
+                dutyNote(dutyIncluded(product, selection), country)}</p>
             ${product.blurb ? `<p class="detail-blurb">${esc(product.blurb)}…</p>` : ''}
             <div class="opt-stack">${opts}</div>
             <button class="btn btn-block" data-add ${available ? '' : 'disabled'}>${available ? 'Add to cart' : 'Sold out'}</button>
@@ -128,7 +129,7 @@
               <div class="spec-row"><span class="muted">Material</span><span>PLA plastic, printed and hand-finished in our studio</span></div>
               <div class="spec-row"><span class="muted">Made in</span><span>Canada</span></div>
               <div class="spec-row"><span class="muted">Shipping</span><span>Fixed rate per item, shown at checkout</span></div>
-              <div class="spec-row"><span class="muted">US orders</span><span>Duty prepaid, nothing to pay on delivery</span></div>
+              <div class="spec-row"><span class="muted">US orders</span><span>Import duty prepaid and shown at checkout, nothing to pay on delivery</span></div>
             </div>
           </div>
         </div>
