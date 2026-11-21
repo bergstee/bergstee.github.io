@@ -276,7 +276,7 @@ function esc(s) { const d = document.createElement('div'); d.textContent = s == 
 
 function productCard(product, country) {
     const hasOpts = (product.properties || []).length > 0;
-    const href = product.slug ? `/p/${product.slug}/` : ('item.html?id=' + encodeURIComponent(product.listing_id));
+    const href = product.slug ? `/p/${product.slug}/` : ('/item.html?id=' + encodeURIComponent(product.listing_id));
     return `
     <article class="card" data-id="${esc(product.listing_id)}">
       <a class="card-img" href="${href}">
@@ -342,7 +342,7 @@ function paintQuickView() {
             <div class="opt-stack">${opts}</div>
             <div class="card-fill"></div>
             <button class="btn btn-block" data-qv-add ${available ? '' : 'disabled'}>${available ? 'Add to cart' : 'Sold out'}</button>
-            <a href="${p.slug ? `/p/${p.slug}/` : ('item.html?id=' + encodeURIComponent(p.listing_id))}" class="link-quiet" style="text-align:center;margin:12px auto 0;width:fit-content">View full details</a>
+            <a href="${p.slug ? `/p/${p.slug}/` : ('/item.html?id=' + encodeURIComponent(p.listing_id))}" class="link-quiet" style="text-align:center;margin:12px auto 0;width:fit-content">View full details</a>
           </div>
         </div>
       </div>`;
@@ -435,8 +435,8 @@ function paintNav(categories) {
             .sort((a, b) => b.count - a.count)
             .slice(0, NAV_MAX);
     }
-    host.innerHTML = '<a href="shop.html">Shop</a>' +
-        picks.map(c => `<a href="shop.html?c=${encodeURIComponent(c.name)}">${esc(c.name)}</a>`).join('');
+    host.innerHTML = '<a href="/shop.html">Shop</a>' +
+        picks.map(c => `<a href="/shop.html?c=${encodeURIComponent(c.name)}">${esc(c.name)}</a>`).join('');
 }
 
 
@@ -556,7 +556,7 @@ function initChrome() {
         search.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 const q = search.value.trim();
-                location.href = 'shop.html' + (q ? '?q=' + encodeURIComponent(q) : '');
+                location.href = '/shop.html' + (q ? '?q=' + encodeURIComponent(q) : '');
             }
         });
     }
