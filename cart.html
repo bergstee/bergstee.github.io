@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-<link href="css/storefront.css?v=202611131600" rel="stylesheet">
+<link href="css/storefront.css?v=202611201200" rel="stylesheet">
 </head>
 <body>
 
@@ -60,7 +60,7 @@
   </div>
 </footer>
 
-<script src="js/storefront.js?v=202611131600"></script>
+<script src="js/storefront.js?v=202611201200"></script>
 <script>
 (() => {
     const country = getCountry();
@@ -110,6 +110,11 @@
             <div class="cart-summary-inner">
               ${dutyRows}
               <div class="cart-total"><span>Subtotal</span><span>${money(subtotal, country)}</span></div>
+              <div class="cart-promo">
+                ${getCoupon()
+                    ? `<div class="cart-sub"><span>Promo code <b>${esc(getCoupon())}</b> applied at checkout</span><a href="#" class="link-quiet" data-coupon-clear>Remove</a></div>`
+                    : `<form class="cart-promo-form" data-coupon-form><input name="code" placeholder="Promo code" autocomplete="off" aria-label="Promo code"><button type="submit" class="btn btn-ghost">Apply</button></form>`}
+              </div>
               <p class="muted" style="margin:0;font-size:12.5px;line-height:1.55">
                 Sale prices are already applied. Shipping and taxes are calculated at checkout. Checkout is securely handled by Stripe.
                 ${country === 'US' ? 'The US import duty on Canadian-made goods is included in our US prices. We pay it to US Customs for you and list it on your receipt, so there is nothing to pay on delivery.' : ''}
@@ -138,11 +143,23 @@
             paint();
         } else if (co) {
             startCheckout(co);
+        } else if (e.target.closest('[data-coupon-clear]')) {
+            e.preventDefault();
+            setCoupon('');
+            paint();
         } else if (e.target.closest('[data-clear]')) {
             e.preventDefault();
             saveCart([]);
             paint();
         }
+    });
+
+    host.addEventListener('submit', (e) => {
+        const f = e.target.closest('[data-coupon-form]');
+        if (!f) return;
+        e.preventDefault();
+        const code = (f.code.value || '').trim();
+        if (code) { setCoupon(code); paint(); }
     });
 
     paint();

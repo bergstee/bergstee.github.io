@@ -367,6 +367,10 @@ document.addEventListener('click', (e) => {
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeQuickView(); });
 
 /* ------------------------------------------------------------- checkout */
+/* Promo code entered on the cart page; checked by the server at checkout. */
+function getCoupon() { try { return (localStorage.getItem('sqc_coupon') || '').trim().toUpperCase(); } catch (e) { return ''; } }
+function setCoupon(code) { try { code ? localStorage.setItem('sqc_coupon', String(code).trim().toUpperCase()) : localStorage.removeItem('sqc_coupon'); } catch (e) {} }
+
 async function startCheckout(btn) {
     const cart = loadCart();
     if (!cart.length) return;
@@ -382,6 +386,7 @@ async function startCheckout(btn) {
             body: JSON.stringify({
                 country: getCountry(),
                 session_id: sessionId(),
+                coupon: getCoupon() || undefined,
                 items: cart.map(l => ({
                     listing_id: l.listing_id,
                     quantity: l.quantity,
